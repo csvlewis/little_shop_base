@@ -2,7 +2,7 @@ class ReviewsController < ApplicationController
   before_action :require_user
 
   def index
-    @reviews = Review.all_reviews(current_user)
+    @reviews = Review.where(user_id: current_user)
   end
 
   def new
@@ -11,12 +11,12 @@ class ReviewsController < ApplicationController
   end
 
   def create
-    @item =  OrderItem.find(params[:order_item_id]).item
+    @order_item = OrderItem.find(params[:order_item_id])
     @review = Review.create(review_params)
-    @review.order_item_id = params[:order_item_id]
     @review.username = current_user.name
-    @review.item_name = @item.name
+    @review.item_name = @order_item.item.name
     current_user.reviews << @review
+    @order_item.review = @review
     redirect_to user_reviews_path(current_user)
   end
 

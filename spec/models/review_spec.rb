@@ -17,13 +17,4 @@ RSpec.describe Review, type: :model do
     it { should belong_to :user }
     it { should belong_to :order_item }
   end
-
-  describe 'class methods' do
-    describe '.all_reviews(user)' do
-      it 'returns all reviews for a given user' do
-        user = create(:user)
-        review_1 = Review.create(title: 'Title', description: 'Description', rating: 5, )
-      end
-    end
-  end
 end
