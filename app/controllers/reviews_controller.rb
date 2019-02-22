@@ -2,12 +2,12 @@ class ReviewsController < ApplicationController
   before_action :require_user
 
   def index
-
+    @reviews = Review.all_reviews(current_user)
   end
 
   def new
     @review = Review.new
-    @orderitem = OrderItem.find(params[:order_item_id])
+    @order_item = OrderItem.find(params[:order_item_id])
   end
 
   def create
