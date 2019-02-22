@@ -27,4 +27,12 @@ class OrderItem < ApplicationRecord
       save
     end
   end
+
+  def reviewable?
+    if fulfilled && order.status == "completed"
+      true
+    else
+      false
+    end
+  end
 end

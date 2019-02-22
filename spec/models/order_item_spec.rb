@@ -58,5 +58,26 @@ RSpec.describe OrderItem, type: :model do
       expect(oi2.fulfilled).to eq(true)
       expect(item.inventory).to eq(0)
     end
+
+    describe '.reviewable?' do
+      it 'returns true if an orderitem is fulfilled and is part of a completed order' do
+        pending = create(:order)
+        cancelled = create(:cancelled_order)
+        completed = create(:completed_order)
+        oi_1 = create(:order_item, order: pending)
+        oi_2 = create(:fulfilled_order_item, order: pending)
+        oi_3 = create(:order_item, order: cancelled)
+        oi_4 = create(:fulfilled_order_item, order: cancelled)
+        oi_5 = create(:fulfilled_order_item, order: completed)
+        oi_6 = create(:fulfilled_order_item, order: completed)
+
+        expect(oi_1.reviewable?).to eq(false)
+        expect(oi_2.reviewable?).to eq(false)
+        expect(oi_3.reviewable?).to eq(false)
+        expect(oi_4.reviewable?).to eq(false)
+        expect(oi_5.reviewable?).to eq(true)
+        expect(oi_6.reviewable?).to eq(true)
+      end
+    end
   end
 end

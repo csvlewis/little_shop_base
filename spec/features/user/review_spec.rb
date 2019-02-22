@@ -28,7 +28,7 @@ RSpec.describe 'User Reviews', type: :feature do
       click_link 'Orders'
       click_link "#{@completed_order_1.id}"
       within("div#oitem-#{@oi_3.id}") do
-        click_link 'Leave a Review'
+        click_link 'Review Item'
       end
 
       expect(current_path).to eq(new_review_path)
