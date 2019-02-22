@@ -14,9 +14,16 @@ Rails.application.routes.draw do
     resources :orders, only: [:index, :create, :show, :destroy]
   end
 
-  resources :users, only: [:create, :update]
+  resources :users, only: [:create, :update] do
+  end
 
-  resources :reviews, only: :new
+  resources :users do
+    resources :reviews, only: [:index]
+  end
+
+  resources :order_item do
+    resources :reviews, only: [:new, :create]
+  end
 
   get '/cart', to: 'cart#show'
   post '/cart/item/:id', to: 'cart#add', as: :cart_item

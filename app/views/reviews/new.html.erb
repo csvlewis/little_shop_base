@@ -1,4 +1,4 @@
-<%= form_for @review do |f|  %>
+<%= form_for [@orderitem, @review] do |f|  %>
 
 <p><%= f.label :title %>
 <%= f.text_field :title, required: true %></p>
@@ -8,4 +8,7 @@
 
 <p><%= f.label :rating %>
 <%= f.number_field :rating, required: true %></p>
+
+<%= f.submit 'Create Review' %>
+
 <% end %>

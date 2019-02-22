@@ -31,14 +31,14 @@ RSpec.describe 'User Reviews', type: :feature do
         click_link 'Review Item'
       end
 
-      expect(current_path).to eq(new_review_path)
+      expect(current_path).to eq(new_order_item_review_path(@oi_3))
 
       fill_in :review_title, with: 'Sample Title'
       fill_in :review_description, with: 'Sample Description'
       fill_in :review_rating, with: 5
       click_button 'Create Review'
 
-      expect(current_path).to eq(user_reviews_path)
+      expect(current_path).to eq(user_reviews_path(@user))
       expect(page).to have_content('Sample Title')
       expect(page).to have_content('Sample Description')
       expect(page).to have_content('Rating: 5/5')
