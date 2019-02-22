@@ -1,0 +1,47 @@
+require 'rails_helper'
+
+RSpec.describe 'User Reviews', type: :feature do
+  before :each do
+    @user = create(:user)
+    @merchant_1 = create(:merchant)
+
+    @item_1 = create(:item, user: @merchant_1)
+    @item_2 = create(:item, user: @merchant_1)
+
+    @pending_order = create(:order, user: @user,)
+    @oi_1 = create(:order_item, order: @pending_order, item: @item_1)
+
+    @cancelled_order = create(:cancelled_order, user: @user)
+    @oi_2 = create(:order_item, order: @cancelled_order, item: @item_1)
+
+    @completed_order_1 = create(:completed_order, user: @user)
+    @oi_3 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_1)
+    @oi_4 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_2)
+
+    @completed_order_2 = create(:completed_order, user: @user)
+    @oi_5 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_1)
+    @oi_6 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_2)
+  end
+  context 'as a registered user' do
+    it 'I can write a review for an item I have bought in a completed order' do
+      login_as(@user)
+      click_link 'Orders'
+      click_link "#{@completed_order_1.id}"
+      within("div#oitem-#{@oi_3.id}") do
+        click_link 'Leave a Review'
+      end
+
+      expect(current_path).to eq(new_review_path)
+
+      fill_in :review_title, with: 'Sample Title'
+      fill_in :review_description, with: 'Sample Description'
+      fill_in :review_rating, with: 5
+      click_button 'Create Review'
+
+      expect(current_path).to eq(user_reviews_path)
+      expect(page).to have_content('Sample Title')
+      expect(page).to have_content('Sample Description')
+      expect(page).to have_content('Rating: 5/5')
+    end
+  end
+end
