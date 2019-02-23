@@ -116,5 +116,19 @@ RSpec.describe 'User Reviews', type: :feature do
       fill_in :review_title, with: 'Edited Title'
       click_button 'Update Review'
     end
+
+    it 'I am given an error message if I try to edit a review with invalid information' do
+      click_link 'Profile'
+      click_link 'See All Reviews'
+      within("div#review-#{@review_1.id}") do
+        click_link 'Edit Review'
+      end
+
+      fill_in :review_rating, with: 7
+      click_button 'Update Review'
+
+      expect(current_path).to eq(order_item_review_path(@oi_4, @review_1))
+      expect(page).to have_content('There are problems with the provided information.')
+    end
   end
 end
