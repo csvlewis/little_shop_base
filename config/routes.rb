@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:create, :update]
 
-  resources :reviews, only: [:index, :edit]
+  resources :reviews, only: [:index, :edit, :destroy]
 
   resources :order_item do
     resources :reviews, only: [:new, :create, :update]

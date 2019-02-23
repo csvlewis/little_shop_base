@@ -4,5 +4,6 @@
   <%= review.description %>
   Rating: <%= review.rating %>/5
   <%= link_to 'Edit Review', edit_review_path(review) %>
+  <%= link_to 'Delete Review', review_path(review), method: :delete %>
   <% end %>
 <% end %>
