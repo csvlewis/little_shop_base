@@ -2,12 +2,17 @@ require 'rails_helper'
 
 RSpec.describe 'merchant dashboard statistics' do
   before :each do
-    @u1 = create(:user, state: "CO", city: "Fairfield")
-    @u2 = create(:user, state: "OK", city: "OKC")
-    @u3 = create(:user, state: "IA", city: "Fairfield")
-    u4 = create(:user, state: "IA", city: "Des Moines")
-    u5 = create(:user, state: "IA", city: "Des Moines")
-    u6 = create(:user, state: "IA", city: "Des Moines")
+    a1 = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+    a2 = Address.create(nickname: 'Home', street: 'street', city: 'OCK', state: 'OK', zip: 1)
+    a3 = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'IA', zip: 1)
+    a4 = Address.create(nickname: 'Home', street: 'street', city: 'Des Moines', state: 'IA', zip: 1)
+    @u1 = create(:user, addresses: a1)
+    @u2 = create(:user, addresses: a2)
+    @u2 = create(:user, addresses: a2)
+    @u3 = create(:user, addresses: a3)
+    u4 = create(:user, addresses: a4)
+    u5 = create(:user, addresses: a4)
+    u6 = create(:user, addresses: a4)
     @m1 = create(:merchant)
     @m2 = create(:merchant)
     @i1 = create(:item, merchant_id: @m1.id, inventory: 20)
