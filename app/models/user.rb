@@ -4,6 +4,7 @@ class User < ApplicationRecord
   enum role: [:default, :merchant, :admin]
 
   # as a user
+  has_many :reviews
   has_many :orders
   has_many :order_items, through: :orders
   # as a merchant
