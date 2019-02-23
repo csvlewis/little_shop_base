@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'User Reviews', type: :feature do
   before :each do
     @user = create(:user)
+    @user_2 = create(:user)
     @merchant_1 = create(:merchant)
 
     @item_1 = create(:item, user: @merchant_1)
@@ -21,9 +22,14 @@ RSpec.describe 'User Reviews', type: :feature do
     @completed_order_2 = create(:completed_order, user: @user)
     @oi_5 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_1)
     @oi_6 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_2)
+
+    @completed_order_3 = create(:completed_order, user: @user_2)
+    @oi_7 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_1)
+    @oi_8 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_2)
     login_as(@user)
     @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: 'username', item_name: 'item name')
     @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: 'username', item_name: 'item name')
+    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 3, username: 'username', item_name: 'item name')
   end
   context 'as a registered user' do
     it 'I can write a review for an item I have bought in a completed order' do
@@ -76,6 +82,10 @@ RSpec.describe 'User Reviews', type: :feature do
         expect(page).to have_content(@review_2.description)
         expect(page).to have_content("Rating: #{@review_2.rating}/5")
       end
+
+      expect(page).to_not have_content(@review_3.title)
+      expect(page).to_not have_content(@review_3.description)
+      expect(page).to_not have_content("Rating: #{@review_3.rating}")
     end
   end
 end
