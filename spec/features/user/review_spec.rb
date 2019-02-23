@@ -72,6 +72,8 @@ RSpec.describe 'User Reviews', type: :feature do
       click_link 'Profile'
       click_link 'See All Reviews'
 
+      expect(current_path).to eq(reviews_path)
+
       within("div#review-#{@review_1.id}") do
         expect(page).to have_content(@review_1.title)
         expect(page).to have_content(@review_1.description)
@@ -129,6 +131,18 @@ RSpec.describe 'User Reviews', type: :feature do
 
       expect(current_path).to eq(order_item_review_path(@oi_4, @review_1))
       expect(page).to have_content('There are problems with the provided information.')
+    end
+
+    it 'I can delete a review I have already created' do
+      click_link 'Profile'
+      click_link 'See All Reviews'
+      within("div#review-#{@review_1.id}") do
+        expect(page).to have_content(@review_1.title)
+        click_link 'Delete Review'
+      end
+
+      expect(current_path).to eq(reviews_path)
+      expect(page).to_not have_content(@review_1.title)
     end
   end
 end

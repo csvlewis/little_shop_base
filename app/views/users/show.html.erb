@@ -15,7 +15,7 @@
 <% end %>
 
 <% unless @user.reviews.empty? %>
-  <%= link_to 'See All Reviews', reviews_path(@user) %>
+  <%= link_to 'See All Reviews', reviews_path %>
 <% end %>
 
 <% unless @user.orders.empty? %>
