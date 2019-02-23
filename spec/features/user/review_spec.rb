@@ -210,26 +210,20 @@ RSpec.describe 'User Reviews', type: :feature do
         click_link "#{@item_2.name}"
       end
 
-      within("div#review-#{@review_1.id}") do
-        expect(page).to have_content(@review_1.title)
-        expect(page).to have_content(@review_1.description)
-        expect(page).to have_content(@review_1.rating)
-        expect(page).to_not have_content(@review_1.updated_at)
-      end
+      expect(page).to have_content(@review_1.title)
+      expect(page).to have_content(@review_1.description)
+      expect(page).to have_content(@review_1.rating)
+      expect(page).to_not have_content(@review_1.updated_at)
 
-      within("div#review-#{@review_2.id}") do
-        expect(page).to have_content(@review_2.title)
-        expect(page).to have_content(@review_2.description)
-        expect(page).to have_content(@review_2.rating)
-        expect(page).to_not have_content(@review_2.updated_at)
-      end
+      expect(page).to have_content(@review_2.title)
+      expect(page).to have_content(@review_2.description)
+      expect(page).to have_content(@review_2.rating)
+      expect(page).to_not have_content(@review_2.updated_at)
 
-      within("div#review-#{@review_3.id}") do
-        expect(page).to have_content(@review_3.title)
-        expect(page).to have_content(@review_3.description)
-        expect(page).to have_content(@review_3.rating)
-        expect(page).to have_content(@review_3.updated_at)
-      end
+      expect(page).to have_content(@review_3.title)
+      expect(page).to have_content(@review_3.description)
+      expect(page).to have_content(@review_3.rating)
+      expect(page).to have_content(@review_3.updated_at)
     end
   end
 
