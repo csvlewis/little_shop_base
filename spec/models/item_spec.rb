@@ -27,7 +27,7 @@ RSpec.describe Item, type: :model do
         order = create(:completed_order, user: user)
         create(:fulfilled_order_item, order: order, item: @items[3], quantity: 7)
         create(:fulfilled_order_item, order: order, item: @items[1], quantity: 6)
-        create(:fulfilled_order_item, order: order, item: @items[0], quantity: 5)
+        oi_1 = create(:fulfilled_order_item, order: order, item: @items[0], quantity: 5)
         create(:fulfilled_order_item, order: order, item: @items[2], quantity: 3)
         create(:fulfilled_order_item, order: order, item: @items[5], quantity: 2)
         create(:fulfilled_order_item, order: order, item: @items[4], quantity: 1)
@@ -45,6 +45,18 @@ RSpec.describe Item, type: :model do
         actual = Item.unpopular_items(3)
         expect(actual).to eq([@items[4], @items[5], @items[2]])
         expect(actual[0].total_ordered).to eq(1)
+      end
+
+      describe '.average_rating' do
+        it 'returns the average rating of all reviews for an item' do
+          order_2 = create(:completed_order, user: user)
+          oi_2 = create(:fulfilled_order_item, order: order_2, item: @items[0], quantity: 5)
+
+          user.reviews.create(order_item: oi_1, title: 'title 1', description: 'description 1', rating: 1, username: 'username 1', item_name: 'item name 1')
+          user.reviews.create(order_item: oi_2, title: 'title 2', description: 'description 2', rating: 2, username: 'username 2', item_name: 'item name 2')
+
+          expect(@items[0].average_rating).to eq(1.50)
+        end
       end
     end
   end
