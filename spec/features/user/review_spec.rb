@@ -29,7 +29,7 @@ RSpec.describe 'User Reviews', type: :feature do
 
     @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: 'username', item_name: 'item name')
     @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: 'username', item_name: 'item name')
-    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 3, username: 'username', item_name: 'item name')
+    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 4, username: 'username', item_name: 'item name')
 
     login_as(@user)
   end
@@ -196,11 +196,11 @@ RSpec.describe 'User Reviews', type: :feature do
       click_link 'Items'
 
       within("section#item-#{@item_2.id}") do
-        expect(page).to have_content("Average Rating: 1.50/5")
-        click_link "#{@item_1.name}"
+        expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(2)}/5")
+        click_link "#{@item_2.name}"
       end
 
-      save_and_open_page
+      expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(2)}/5")
     end
 
     it 'I see all the reviews for an item on the item show page' do

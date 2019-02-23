@@ -1,1 +1,6 @@
 <%= render partial: "card", locals: {item: @item, img_width: 300}%>
+<% if @item.average_rating %>
+  Average Rating: <%= @item.average_rating.round(2) %>/5
+<% else %>
+  Not Yet Rated
+<% end %>
