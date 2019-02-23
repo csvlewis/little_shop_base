@@ -35,6 +35,7 @@ RSpec.describe 'User Reviews', type: :feature do
     it 'I can write a review for an item I have bought in a completed order' do
       click_link 'Orders'
       click_link "#{@completed_order_1.id}"
+
       within("div#oitem-#{@oi_3.id}") do
         click_link 'Review Item'
       end
@@ -86,6 +87,34 @@ RSpec.describe 'User Reviews', type: :feature do
       expect(page).to_not have_content(@review_3.title)
       expect(page).to_not have_content(@review_3.description)
       expect(page).to_not have_content("Rating: #{@review_3.rating}")
+    end
+
+    it 'I am given an error message if I try to submit a review with invalid information' do
+      click_link 'Orders'
+      click_link "#{@completed_order_1.id}"
+      within("div#oitem-#{@oi_3.id}") do
+        click_link 'Review Item'
+      end
+
+      expect(current_path).to eq(new_order_item_review_path(@oi_3))
+      fill_in :review_title, with: 'Title'
+      fill_in :review_description, with: 'Description'
+      fill_in :review_rating, with: 6
+      click_button 'Create Review'
+
+      expect(current_path).to eq(order_item_reviews_path(@oi_3))
+      expect(page).to have_content('There are problems with the provided information.')
+    end
+
+    it 'I can edit a review I have already created' do
+      click_link 'Profile'
+      click_link 'See All Reviews'
+      within("div#review-#{@review_1.id}") do
+        click_link 'Edit Review'
+      end
+
+      fill_in :review_title, with: 'Edited Title'
+      click_button 'Update Review'
     end
   end
 end

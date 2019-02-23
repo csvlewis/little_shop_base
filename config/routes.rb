@@ -16,10 +16,10 @@ Rails.application.routes.draw do
 
   resources :users, only: [:create, :update]
 
-  resources :reviews, only: [:index]
+  resources :reviews, only: [:index, :edit]
 
   resources :order_item do
-    resources :reviews, only: [:new, :create]
+    resources :reviews, only: [:new, :create, :update]
   end
 
   get '/cart', to: 'cart#show'

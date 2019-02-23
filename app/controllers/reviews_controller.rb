@@ -8,6 +8,7 @@ class ReviewsController < ApplicationController
   def new
     @review = Review.new
     @order_item = OrderItem.find(params[:order_item_id])
+    @form_path = [@order_item, @review]
   end
 
   def create
@@ -21,6 +22,26 @@ class ReviewsController < ApplicationController
       redirect_to reviews_path(current_user)
     else
       flash[:danger] = 'There are problems with the provided information.'
+      @form_path = [@order_item, @review]
+      render :new
+    end
+  end
+
+  def edit
+    @review = Review.find(params[:id])
+    @order_item = @review.order_item
+    @form_path = [@order_item, @review]
+  end
+
+  def update
+    @review = Review.find(params[:id])
+    @order_item = OrderItem.find(params[:order_item_id])
+    if @review.update(review_params)
+      flash[:success] = 'You have edited a review.'
+      redirect_to reviews_path(current_user)
+    else
+      flash[:danger] = 'There are problems with the provided information.'
+      @form_path = [@order_item, @review]
       render :new
     end
   end

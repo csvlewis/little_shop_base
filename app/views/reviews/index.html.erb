@@ -3,5 +3,6 @@
   <%= review.title %>
   <%= review.description %>
   Rating: <%= review.rating %>/5
+  <%= link_to 'Edit Review', edit_review_path(review) %>
   <% end %>
 <% end %>
