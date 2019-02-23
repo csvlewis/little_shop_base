@@ -26,10 +26,12 @@ RSpec.describe 'User Reviews', type: :feature do
     @completed_order_3 = create(:completed_order, user: @user_2)
     @oi_7 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_1)
     @oi_8 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_2)
-    login_as(@user)
+
     @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: 'username', item_name: 'item name')
     @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: 'username', item_name: 'item name')
     @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 3, username: 'username', item_name: 'item name')
+
+    login_as(@user)
   end
   context 'as a registered user' do
     it 'I can write a review for an item I have bought in a completed order' do
@@ -54,6 +56,38 @@ RSpec.describe 'User Reviews', type: :feature do
       expect(page).to have_content('Rating: 5/5')
     end
 
+    it 'I can review the same item multiple times across different orders' do
+      expect(@oi_3.item).to eq(@oi_5.item)
+
+      click_link 'Orders'
+      click_link "#{@completed_order_1.id}"
+
+      within("div#oitem-#{@oi_3.id}") do
+        click_link 'Review Item'
+      end
+
+      expect(current_path).to eq(new_order_item_review_path(@oi_3))
+
+      fill_in :review_title, with: 'Sample Title'
+      fill_in :review_description, with: 'Sample Description'
+      fill_in :review_rating, with: 4
+      click_button 'Create Review'
+
+      click_link 'Orders'
+      click_link "#{@completed_order_2.id}"
+      within("div#oitem-#{@oi_5.id}") do
+        click_link 'Review Item'
+      end
+
+      fill_in :review_title, with: 'Sample Title 2'
+      fill_in :review_description, with: 'Sample Description 2'
+      fill_in :review_rating, with: 5
+      click_button 'Create Review'
+
+      expect(page).to have_content('Sample Title')
+      expect(page).to have_content('Sample Title 2')
+    end
+
     it 'I cannot write a review for an item in a pending or cancelled order' do
       click_link 'Orders'
       click_link "#{@pending_order.id}"
@@ -64,6 +98,19 @@ RSpec.describe 'User Reviews', type: :feature do
       click_link 'Orders'
       click_link "#{@cancelled_order.id}"
       within("div#oitem-#{@oi_2.id}") do
+        expect(page).to_not have_link('Review Item')
+      end
+    end
+
+    it 'I cannot write a review for an item that I have already reviewed' do
+      click_link 'Orders'
+      click_link "#{@completed_order_1.id}"
+
+      within("div#oitem-#{@oi_3.id}") do
+        expect(page).to have_link('Review Item')
+      end
+
+      within("div#oitem-#{@oi_4.id}") do
         expect(page).to_not have_link('Review Item')
       end
     end
@@ -143,6 +190,54 @@ RSpec.describe 'User Reviews', type: :feature do
 
       expect(current_path).to eq(reviews_path)
       expect(page).to_not have_content(@review_1.title)
+    end
+
+    it 'I see the average rating of an item on the item index and the item\'s show page' do
+      click_link 'Items'
+
+      within("section#item-#{@item_2.id}") do
+        expect(page).to have_content("Average Rating: 1.50/5")
+        click_link "#{@item_1.name}"
+      end
+
+      save_and_open_page
+    end
+
+    it 'I see all the reviews for an item on the item show page' do
+    end
+  end
+
+  context 'as a visitor, merchant, or admin' do
+    it 'I cannot access any review paths' do
+      merchant = create(:merchant)
+      admin = create(:admin)
+      click_link 'Log out'
+
+      visit reviews_path
+      expect(page.status_code).to eq(404)
+      visit edit_review_path(@review_1)
+      expect(page.status_code).to eq(404)
+      visit new_order_item_review_path(@oi_1)
+      expect(page.status_code).to eq(404)
+      visit root_path
+
+      login_as(merchant)
+      visit reviews_path
+      expect(page.status_code).to eq(404)
+      visit edit_review_path(@review_1)
+      expect(page.status_code).to eq(404)
+      visit new_order_item_review_path(@oi_1)
+      expect(page.status_code).to eq(404)
+      visit root_path
+      click_link 'Log out'
+
+      login_as(admin)
+      visit reviews_path
+      expect(page.status_code).to eq(404)
+      visit edit_review_path(@review_1)
+      expect(page.status_code).to eq(404)
+      visit new_order_item_review_path(@oi_1)
+      expect(page.status_code).to eq(404)
     end
   end
 end
