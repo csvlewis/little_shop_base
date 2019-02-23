@@ -47,4 +47,9 @@ class Item < ApplicationRecord
       .where(fulfilled: true, orders: {status: :completed}, item_id: self.id)
       .count > 0
   end
+
+  def average_rating
+    order_items.joins(:reviews)
+               .average("reviews.rating")
+  end
 end
