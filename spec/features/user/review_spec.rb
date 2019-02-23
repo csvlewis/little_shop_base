@@ -196,11 +196,11 @@ RSpec.describe 'User Reviews', type: :feature do
       click_link 'Items'
 
       within("section#item-#{@item_2.id}") do
-        expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(2)}/5")
+        expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(1)}/5")
         click_link "#{@item_2.name}"
       end
 
-      expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(2)}/5")
+      expect(page).to have_content("Average Rating: #{@item_2.average_rating.round(1)}/5")
     end
 
     it 'I see all the reviews for an item on the item show page' do
