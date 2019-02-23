@@ -18,6 +18,10 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'class methods' do
+    describe '.all_reviews' do
+      it 'returns all reviews for an item' do
+      end
+    end
     describe 'item popularity' do
       before :each do
         merchant = create(:merchant)
@@ -105,6 +109,24 @@ RSpec.describe Item, type: :model do
       user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')
 
       expect(item.average_rating).to eq(1.50)
+    end
+  end
+
+  describe '.all_reviews' do
+    it 'returns all reviews for a given item' do
+      user = create(:user)
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+      order_1 = create(:completed_order, user: user)
+      oi_1 = create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
+      order_2 = create(:completed_order, user: user)
+      oi_2 = create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
+      review_1 = user.reviews.create(order_item: oi_1, title: 'title', description: 'description', rating: 1, username: 'username', item_name: 'item name')
+      review_2 = user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')
+
+      expect(item.all_reviews.count).to eq(2)
+      expect(item.all_reviews.first.title).to eq(review_1.title)
+      expect(item.all_reviews.second.title).to eq(review_2.title)
     end
   end
 end

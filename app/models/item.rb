@@ -52,4 +52,9 @@ class Item < ApplicationRecord
     order_items.joins(:reviews)
                .average("reviews.rating")
   end
+
+  def all_reviews
+    order_items.joins(:reviews)
+               .select('reviews.*')
+  end
 end

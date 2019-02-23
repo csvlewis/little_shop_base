@@ -29,7 +29,7 @@ RSpec.describe 'User Reviews', type: :feature do
 
     @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: 'username', item_name: 'item name')
     @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: 'username', item_name: 'item name')
-    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 4, username: 'username', item_name: 'item name')
+    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 4, username: 'username', item_name: 'item name', created_at: 1.hour.ago, updated_at: 1.second.ago)
 
     login_as(@user)
   end
@@ -204,6 +204,32 @@ RSpec.describe 'User Reviews', type: :feature do
     end
 
     it 'I see all the reviews for an item on the item show page' do
+      click_link 'Items'
+
+      within("section#item-#{@item_2.id}") do
+        click_link "#{@item_2.name}"
+      end
+
+      within("div#review-#{@review_1.id}") do
+        expect(page).to have_content(@review_1.title)
+        expect(page).to have_content(@review_1.description)
+        expect(page).to have_content(@review_1.rating)
+        expect(page).to_not have_content(@review_1.updated_at)
+      end
+
+      within("div#review-#{@review_2.id}") do
+        expect(page).to have_content(@review_2.title)
+        expect(page).to have_content(@review_2.description)
+        expect(page).to have_content(@review_2.rating)
+        expect(page).to_not have_content(@review_2.updated_at)
+      end
+
+      within("div#review-#{@review_3.id}") do
+        expect(page).to have_content(@review_3.title)
+        expect(page).to have_content(@review_3.description)
+        expect(page).to have_content(@review_3.rating)
+        expect(page).to have_content(@review_3.updated_at)
+      end
     end
   end
 
