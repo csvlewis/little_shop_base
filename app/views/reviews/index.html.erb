@@ -1,0 +1,7 @@
+<% @reviews.each do |review| %>
+  <%= tag.div id: "review-#{review.id}" do %>
+  <%= review.title %>
+  <%= review.description %>
+  Rating: <%= review.rating %>/5
+  <% end %>
+<% end %>

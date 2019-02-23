@@ -16,8 +16,13 @@ class ReviewsController < ApplicationController
     @review.username = current_user.name
     @review.item_name = @order_item.item.name
     current_user.reviews << @review
-    @order_item.review = @review
-    redirect_to user_reviews_path(current_user)
+    if @order_item.reviews << @review
+      flash[:success] = 'You have created a review.'
+      redirect_to reviews_path(current_user)
+    else
+      flash[:danger] = 'There are problems with the provided information.'
+      render :new
+    end
   end
 
   private
