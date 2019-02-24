@@ -123,5 +123,32 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to have_content("Order ID #{Order.last.id}")
       expect(Order.last.address).to eq(@address)
     end
+
+    it 'if I have no addresses, I cannot check out and instead receive a notice with a link to add an address' do
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+
+      click_link 'Delete Address'
+      expect(@user.addresses.count).to eq(0)
+
+      visit item_path(item)
+      click_button "Add to Cart"
+      visit cart_path
+
+      expect(page).to_not have_button('Check out')
+
+      click_link 'add an address'
+
+      expect(current_path).to eq(new_address_path)
+
+      fill_in :address_street, with: '123 Main Street'
+      fill_in :address_city, with: 'Denver'
+      fill_in :address_state, with: 'CO'
+      fill_in :address_zip, with: 12345
+
+      click_button 'Create Address'
+
+      expect(@user.addresses.count).to eq(1)
+    end
   end
 end

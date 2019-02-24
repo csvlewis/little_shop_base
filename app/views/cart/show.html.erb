@@ -7,8 +7,12 @@
 
   <%= button_to "Empty cart", cart_empty_path, method: :delete %>
 
-  <% if current_user %>
+  <% if current_user && !current_user.addresses.empty? %>
     <%= button_to 'Check out', addresses_path, method: :get %>
+  <% elsif current_user && current_user.addresses.empty? %>
+    You must
+      <%= link_to 'add an address', new_address_path %>
+    to check out.
   <% else %>
     You must
     <%= link_to 'register', registration_path %>
