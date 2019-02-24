@@ -10,6 +10,7 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'relationships' do
+    it { should have_many :orders}
     it { should belong_to :user}
   end
 end

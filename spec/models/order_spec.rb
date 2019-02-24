@@ -6,6 +6,7 @@ RSpec.describe Order, type: :model do
   end
 
   describe 'relationships' do
+    it { should belong_to :address }
     it { should belong_to :user }
     it { should have_many :order_items }
     it { should have_many(:items).through(:order_items) }
@@ -13,13 +14,14 @@ RSpec.describe Order, type: :model do
 
   describe 'Class Methods' do
     before :each do
-      @o1 = create(:completed_order)
-      @o2 = create(:completed_order)
-      @o3 = create(:completed_order)
-      @o4 = create(:completed_order)
-      @o5 = create(:cancelled_order)
-      @o6 = create(:completed_order)
-      @o7 = create(:completed_order)
+      address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+      @o1 = create(:completed_order, address: address)
+      @o2 = create(:completed_order, address: address)
+      @o3 = create(:completed_order, address: address)
+      @o4 = create(:completed_order, address: address)
+      @o5 = create(:cancelled_order, address: address)
+      @o6 = create(:completed_order, address: address)
+      @o7 = create(:completed_order, address: address)
       oi1 = create(:fulfilled_order_item, order: @o1)
       oi2 = create(:fulfilled_order_item, order: @o7)
       oi3 = create(:fulfilled_order_item, order: @o2)
@@ -29,7 +31,7 @@ RSpec.describe Order, type: :model do
       oi7 = create(:fulfilled_order_item, order: @o4)
       @merchant = create(:merchant)
       @i1, @i2 = create_list(:item, 2, user: @merchant)
-      @o8, @o9 = create_list(:order, 2)
+      @o8, @o9 = create_list(:order, 2, address: address)
       create(:order_item, order: @o8, item: @i1, quantity: 1, price: 2)
       create(:order_item, order: @o8, item: @i2, quantity: 2, price: 2)
       create(:order_item, order: @o9, item: @i2, quantity: 4, price: 2)
@@ -61,15 +63,16 @@ RSpec.describe Order, type: :model do
       @item_2 = create(:item)
       yesterday = 1.day.ago
 
-      @order = create(:order, user: user, created_at: yesterday)
+      address = Address.create(nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
+      @order = create(:order, address: address, user: user, created_at: yesterday)
       @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 1, created_at: yesterday, updated_at: yesterday)
       @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 1, created_at: yesterday, updated_at: 2.hours.ago)
 
       @merchant = create(:merchant)
       @i1, @i2 = create_list(:item, 2, user: @merchant)
-      @o1, @o2 = create_list(:order, 2)
-      @o3 = create(:completed_order)
-      @o4 = create(:cancelled_order)
+      @o1, @o2 = create_list(:order, 2, address: address)
+      @o3 = create(:completed_order, address: address)
+      @o4 = create(:cancelled_order, address: address)
       create(:order_item, order: @o1, item: @i1, quantity: 1, price: 2)
       create(:order_item, order: @o1, item: @i2, quantity: 2, price: 2)
       create(:order_item, order: @o2, item: @i2, quantity: 4, price: 2)
@@ -99,7 +102,8 @@ RSpec.describe Order, type: :model do
       merchant1 = create(:merchant)
       merchant2 = create(:merchant)
       user = create(:user)
-      order = create(:order, user: user)
+      address = Address.create(nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
+      order = create(:order, address: address, user: user)
       item1 = create(:item, user: merchant1)
       item2 = create(:item, user: merchant2)
       item3 = create(:item, user: merchant1)
