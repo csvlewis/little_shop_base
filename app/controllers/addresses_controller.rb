@@ -17,6 +17,22 @@ class AddressesController < ApplicationController
     end
   end
 
+  def edit
+    @form_path = Address.find(params[:id])
+  end
+
+  def update
+    @address = Address.find(params[:id])
+    if @address.update(address_params)
+      flash[:success] = 'You have edited an address.'
+      redirect_to profile_path
+    else
+      flash[:danger] = 'There are problems with the provided information.'
+      @form_path = @address
+      render :edit
+    end
+  end
+
   private
 
   def address_params

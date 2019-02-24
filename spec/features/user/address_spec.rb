@@ -35,11 +35,13 @@ RSpec.describe 'user addresses', type: :feature do
   context 'as a registered user' do
     before :each do
       @user = create(:user)
+      @address = Address.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
+      @user.addresses << @address
       login_as(@user)
     end
     it 'I can add a new address from a link on my Profile page' do
       expect(page).to_not have_content('123 Main Street')
-      expect(@user.addresses.count).to eq(0)
+      expect(@user.addresses.count).to eq(1)
 
       click_link 'Add an Address'
 
@@ -56,7 +58,7 @@ RSpec.describe 'user addresses', type: :feature do
 
       expect(current_path).to eq(profile_path)
       expect(page).to have_content('123 Main Street')
-      expect(@user.addresses.count).to eq(1)
+      expect(@user.addresses.count).to eq(2)
     end
 
     it 'I am given an error message if I try to create an address with invalid information' do
@@ -69,7 +71,17 @@ RSpec.describe 'user addresses', type: :feature do
     end
 
     it 'I can edit an address I have created from my profile page' do
+      expect(page).to have_content('Home')
+      click_link 'Edit Address'
 
+      expect(current_path).to eq(edit_address_path(@address))
+
+      fill_in :address_nickname, with: 'New Nickname'
+
+      click_button 'Update Address'
+
+      expect(@user.addresses.first.nickname).to eq('New Nickname')
+      expect(page).to have_content('New Nickname')
     end
   end
 end
