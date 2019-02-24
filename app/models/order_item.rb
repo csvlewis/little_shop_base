@@ -1,6 +1,7 @@
 class OrderItem < ApplicationRecord
   belongs_to :order
   belongs_to :item
+  has_many :reviews
 
   validates :price, presence: true, numericality: {
     only_integer: false,
@@ -25,6 +26,14 @@ class OrderItem < ApplicationRecord
       self.fulfilled = true
       item.save
       save
+    end
+  end
+
+  def reviewable?
+    if fulfilled && order.status == "completed" && reviews.empty?
+      true
+    else
+      false
     end
   end
 end

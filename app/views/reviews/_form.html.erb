@@ -1,0 +1,14 @@
+<%= form_for @form_path do |f|  %>
+
+<p><%= f.label :title %>
+<%= f.text_field :title, required: true %></p>
+
+<p><%= f.label :description %>
+<%= f.text_area :description, required: true %></p>
+
+<p><%= f.label :rating %>
+<%= f.number_field :rating, required: true %></p>
+
+<%= f.submit %>
+
+<% end %>

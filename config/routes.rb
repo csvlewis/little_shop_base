@@ -18,6 +18,12 @@ Rails.application.routes.draw do
 
   resources :users, only: [:create, :update]
 
+  resources :reviews, only: [:index, :edit, :destroy]
+
+  resources :order_item do
+    resources :reviews, only: [:new, :create, :update]
+  end
+
   get '/cart', to: 'cart#show'
   post '/cart/item/:id', to: 'cart#add', as: :cart_item
   post '/cart/addmoreitem/:id', to: 'cart#add_more_item', as: :cart_add_more_item

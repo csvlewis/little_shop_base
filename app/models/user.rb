@@ -5,6 +5,7 @@ class User < ApplicationRecord
 
   # as a user
   has_many :addresses
+  has_many :reviews
   has_many :orders
   has_many :order_items, through: :orders
   # as a merchant

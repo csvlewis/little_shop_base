@@ -22,5 +22,10 @@
 <% @items.each do |item| %>
   <%= tag.section id: "item-#{item.id}" do %>
   <%= render partial: "card", locals: {item: item, img_width: 200}%>
+  <% if item.average_rating %>
+    Average Rating: <%= item.average_rating.round(1) %>/5.0
+  <% else %>
+    Not Yet Rated
+  <% end %>
   <% end %>
 <% end %>

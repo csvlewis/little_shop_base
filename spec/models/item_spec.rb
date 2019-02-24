@@ -18,17 +18,20 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'class methods' do
+    describe '.all_reviews' do
+      it 'returns all reviews for an item' do
+      end
+    end
     describe 'item popularity' do
       before :each do
         merchant = create(:merchant)
         @items = create_list(:item, 6, user: merchant)
         address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
         user = create(:user)
-
         order = create(:completed_order, address: address, user: user)
         create(:fulfilled_order_item, order: order, item: @items[3], quantity: 7)
         create(:fulfilled_order_item, order: order, item: @items[1], quantity: 6)
-        create(:fulfilled_order_item, order: order, item: @items[0], quantity: 5)
+        oi_1 = create(:fulfilled_order_item, order: order, item: @items[0], quantity: 5)
         create(:fulfilled_order_item, order: order, item: @items[2], quantity: 3)
         create(:fulfilled_order_item, order: order, item: @items[5], quantity: 2)
         create(:fulfilled_order_item, order: order, item: @items[4], quantity: 1)
@@ -61,7 +64,6 @@ RSpec.describe Item, type: :model do
         create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
         order_2 = create(:completed_order, address: address, user: user)
         create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
-
         actual = item.avg_time_to_fulfill[0..13]
         expect(actual).to eq('1 day 11:30:00')
       end
@@ -93,5 +95,39 @@ RSpec.describe Item, type: :model do
     expect(item_3.ever_ordered?).to eq(false)
     expect(item_4.ever_ordered?).to eq(false)
     expect(item_5.ever_ordered?).to eq(false)
+  end
+
+  describe '.average_rating' do
+    it 'returns the average rating of all reviews for an item' do
+      user = create(:user)
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+      order_1 = create(:completed_order, user: user)
+      oi_1 = create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
+      order_2 = create(:completed_order, user: user)
+      oi_2 = create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
+      user.reviews.create(order_item: oi_1, title: 'title', description: 'description', rating: 1, username: 'username', item_name: 'item name')
+      user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')
+
+      expect(item.average_rating).to eq(1.50)
+    end
+  end
+
+  describe '.all_reviews' do
+    it 'returns all reviews for a given item' do
+      user = create(:user)
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+      order_1 = create(:completed_order, user: user)
+      oi_1 = create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
+      order_2 = create(:completed_order, user: user)
+      oi_2 = create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
+      review_1 = user.reviews.create(order_item: oi_1, title: 'title', description: 'description', rating: 1, username: 'username', item_name: 'item name')
+      review_2 = user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')
+
+      expect(item.all_reviews.count).to eq(2)
+      expect(item.all_reviews.first.title).to eq(review_1.title)
+      expect(item.all_reviews.second.title).to eq(review_2.title)
+    end
   end
 end
