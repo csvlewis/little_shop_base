@@ -71,17 +71,28 @@ RSpec.describe 'user addresses', type: :feature do
     end
 
     it 'I can edit an address I have created from my profile page' do
-      expect(page).to have_content('Home')
+      expect(page).to have_content("Street: #{@address.street}")
       click_link 'Edit Address'
 
       expect(current_path).to eq(edit_address_path(@address))
 
-      fill_in :address_nickname, with: 'New Nickname'
+      fill_in :address_street, with: 'New Street'
 
       click_button 'Update Address'
 
-      expect(@user.addresses.first.nickname).to eq('New Nickname')
-      expect(page).to have_content('New Nickname')
+      expect(@user.addresses.first.street).to eq('New Street')
+      expect(page).to have_content("Street: New Street")
+    end
+
+    it 'I can delete an address I have created from my profile page' do
+      expect(@user.addresses.count).to eq(1)
+      expect(page).to have_content("Street: #{@address.street}")
+
+      click_link 'Delete Address'
+
+      expect(current_path).to eq(profile_path)
+      expect(@user.addresses.count).to eq(0)
+      expect(page).to_not have_content("Street: #{@address.street}")
     end
   end
 end
