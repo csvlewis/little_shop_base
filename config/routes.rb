@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     resources :orders, only: [:index, :create, :show, :destroy]
   end
 
+  resources :addresses, only: [:new, :create]
+
   resources :users, only: [:create, :update]
 
   get '/cart', to: 'cart#show'

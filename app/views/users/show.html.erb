@@ -3,10 +3,6 @@
 <p>Name: <%= @user.name %></p>
 <p>Role: <%= @user.role %></p>
 <p>Email: <%= @user.email %></p>
-<p>Address: <%= @user.address %></p>
-<p>City: <%= @user.city %></p>
-<p>State: <%= @user.state %></p>
-<p>Zip: <%= @user.zip %></p>
 
 <% if @user == current_user %>
 <%= link_to "Edit", edit_profile_path %>

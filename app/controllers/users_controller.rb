@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @address = Address.new(nickname: 'Home')
     @form_path = @user
   end
 
@@ -15,7 +16,7 @@ class UsersController < ApplicationController
     if @user.save
       session[:user_id] = @user.id
       flash[:success] = "Welcome #{@user.name}, you are now registered and logged in."
-      redirect_to profile_path
+      redirect_to new_address_path
     else
       invalid_user(@user)
     end
