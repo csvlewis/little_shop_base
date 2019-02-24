@@ -1,12 +1,20 @@
 class AddressesController < ApplicationController
+  before_action :require_user
+
   def new
     @form_path = Address.new(nickname: 'Home')
   end
 
   def create
     @address = Address.create(address_params)
-    current_user.addresses << @address
-    redirect_to profile_path
+    if current_user.addresses << @address
+      flash[:success] = 'You have created an address'
+      redirect_to profile_path
+    else
+      flash[:danger] = 'There are problems with the provided information.'
+      @form_path = @address
+      render :new
+    end
   end
 
   private

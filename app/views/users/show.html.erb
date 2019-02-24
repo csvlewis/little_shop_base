@@ -4,6 +4,17 @@
 <p>Role: <%= @user.role %></p>
 <p>Email: <%= @user.email %></p>
 
+<h5>Addresses:</h5>
+<% @user.addresses.each do |address| %>
+  <h6><%= address.nickname %></h6>
+  <p>Street: <%= address.street %></p>
+  <p>State: <%= address.state %></p>
+  <p>City: <%= address.city %></p>
+  <p>Zip code: <%= address.zip %></p>
+<% end %>
+
+<%= link_to 'Add an Address', new_address_path  %>
+
 <% if @user == current_user %>
 <%= link_to "Edit", edit_profile_path %>
 <% elsif current_admin? %>
