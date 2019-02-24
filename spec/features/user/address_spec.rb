@@ -86,6 +86,15 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to have_content("Street: New Street")
     end
 
+    it 'I am given an error message if I try to edit an address with invalid information.' do
+      click_link 'Edit Address'
+      fill_in :address_street, with: ''
+
+      click_button 'Update Address'
+      expect(current_path).to eq(address_path(@address))
+      expect(page).to have_content('There are problems with the provided information.')
+    end
+
     it 'I can delete an address I have created from my profile page' do
       expect(@user.addresses.count).to eq(1)
       expect(page).to have_content("Street: #{@address.street}")
