@@ -4,26 +4,27 @@ RSpec.describe 'User Reviews', type: :feature do
   before :each do
     @user = create(:user)
     @user_2 = create(:user)
+    address = Address.create(user: @user, nickname: 'home', street: 'street', state: 'state', city: 'city', zip: 1)
     @merchant_1 = create(:merchant)
 
     @item_1 = create(:item, user: @merchant_1)
     @item_2 = create(:item, user: @merchant_1)
 
-    @pending_order = create(:order, user: @user,)
+    @pending_order = create(:order, user: @user, address: address)
     @oi_1 = create(:order_item, order: @pending_order, item: @item_1)
 
-    @cancelled_order = create(:cancelled_order, user: @user)
+    @cancelled_order = create(:cancelled_order, user: @user, address: address)
     @oi_2 = create(:order_item, order: @cancelled_order, item: @item_1)
 
-    @completed_order_1 = create(:completed_order, user: @user)
+    @completed_order_1 = create(:completed_order, user: @user, address: address)
     @oi_3 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_1)
     @oi_4 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_2)
 
-    @completed_order_2 = create(:completed_order, user: @user)
+    @completed_order_2 = create(:completed_order, user: @user, address: address)
     @oi_5 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_1)
     @oi_6 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_2)
 
-    @completed_order_3 = create(:completed_order, user: @user_2)
+    @completed_order_3 = create(:completed_order, user: @user_2, address: address)
     @oi_7 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_1)
     @oi_8 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_2)
 
