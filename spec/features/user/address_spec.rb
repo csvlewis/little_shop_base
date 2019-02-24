@@ -104,5 +104,24 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to have_content("Street: #{@address.street}")
       expect(page).to_not have_link('Delete Address')
     end
+
+    it 'I can choose one of my adresses for shipping when checking out my cart' do
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+
+      visit item_path(item)
+      click_button "Add to Cart"
+      visit cart_path
+      click_button 'Check out'
+
+      expect(current_path).to eq(addresses_path)
+
+      click_link 'Ship to This Address'
+
+      expect(current_path).to eq(profile_orders_path)
+      expect(page).to have_content('You have successfully checked out!')
+      expect(page).to have_content("Order ID #{Order.last.id}")
+      expect(Order.last.address).to eq(@address)
+    end
   end
 end

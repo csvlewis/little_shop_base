@@ -1,6 +1,10 @@
 class AddressesController < ApplicationController
   before_action :require_user
 
+  def index
+    @addresses = current_user.addresses
+  end
+
   def new
     @form_path = Address.new(nickname: 'Home')
   end

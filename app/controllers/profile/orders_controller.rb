@@ -7,7 +7,8 @@ class Profile::OrdersController < ApplicationController
   end
 
   def create
-    order = Order.create(user: current_user, status: :pending)
+    address = Address.find(params[:id])
+    order = Order.create(user: current_user, address: address, status: :pending)
     @cart.items.each do |item|
       order.order_items.create!(
         item: item,
