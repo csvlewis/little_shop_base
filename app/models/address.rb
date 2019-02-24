@@ -3,4 +3,10 @@ class Address < ApplicationRecord
 
   belongs_to :user
   has_many :orders
+
+  def deletable?
+    orders.none? do |order|
+      order.status == 'completed'
+    end
+  end
 end

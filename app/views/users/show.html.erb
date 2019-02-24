@@ -13,7 +13,7 @@
     <p>City: <%= address.city %></p>
     <p>Zip code: <%= address.zip %></p>
     <%= link_to 'Edit Address', edit_address_path(address) %>
-    <%= link_to 'Delete Address', address_path(address), method: :delete %>
+    <%= link_to 'Delete Address', address_path(address), method: :delete if address.deletable? %>
   </div>
 <% end %>
 
