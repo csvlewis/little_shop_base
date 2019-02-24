@@ -5,8 +5,14 @@
   <p>Status: <%= @order.status %></p>
   <p>Item Count: <%= @order.total_item_count %></p>
   <p>Total Cost: <%= number_to_currency(@order.total_cost) %></p>
+  <h5>Shipping Address:</h5>
+  <p>Street: <%= @order.address.street %></p>
+  <p>State: <%= @order.address.state %></p>
+  <p>City: <%= @order.address.city %></p>
+  <p>Zip code: <%= @order.address.zip %></p>
 
   <% if @order.status == 'pending' %>
+  <p><%= button_to 'Change Shipping Address', addresses_path(order: @order), method: :get%></p>
   <p><%= button_to 'Cancel Order', profile_order_path(@order), method: :delete %></p>
   <% end %>
 

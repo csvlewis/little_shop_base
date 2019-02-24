@@ -26,9 +26,9 @@ RSpec.describe Item, type: :model do
       before :each do
         merchant = create(:merchant)
         @items = create_list(:item, 6, user: merchant)
-        @user = create(:user)
-
-        order = create(:completed_order, user: @user)
+        address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+        user = create(:user)
+        order = create(:completed_order, address: address, user: user)
         create(:fulfilled_order_item, order: order, item: @items[3], quantity: 7)
         create(:fulfilled_order_item, order: order, item: @items[1], quantity: 6)
         oi_1 = create(:fulfilled_order_item, order: order, item: @items[0], quantity: 5)
@@ -59,9 +59,10 @@ RSpec.describe Item, type: :model do
         user = create(:user)
         merchant = create(:merchant)
         item = create(:item, user: merchant)
-        order_1 = create(:completed_order, user: user)
+        address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+        order_1 = create(:completed_order, address: address, user: user)
         create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
-        order_2 = create(:completed_order, user: user)
+        order_2 = create(:completed_order, address: address, user: user)
         create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
         actual = item.avg_time_to_fulfill[0..13]
         expect(actual).to eq('1 day 11:30:00')
@@ -78,15 +79,15 @@ RSpec.describe Item, type: :model do
 
   it '.ever_ordered?' do
     item_1, item_2, item_3, item_4, item_5 = create_list(:item, 5)
-
-    order = create(:completed_order)
+    address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+    order = create(:completed_order, address: address)
     create(:fulfilled_order_item, order: order, item: item_1, created_at: 4.days.ago, updated_at: 1.days.ago)
 
-    order = create(:order)
+    order = create(:order, address: address)
     create(:fulfilled_order_item, order: order, item: item_2, created_at: 4.days.ago, updated_at: 1.days.ago)
     create(:order_item, order: order, item: item_3, created_at: 4.days.ago, updated_at: 1.days.ago)
 
-    order = create(:order)
+    order = create(:order, address: address)
     create(:order_item, order: order, item: item_4, created_at: 4.days.ago, updated_at: 1.days.ago)
 
     expect(item_1.ever_ordered?).to eq(true)

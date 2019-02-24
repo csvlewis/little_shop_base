@@ -1,0 +1,15 @@
+<h1>Choose a Shipping Address</h1>
+<% @addresses.each do |address| %>
+  <div class="address-<%= address.id %>">
+    <p><%= address.nickname %></p>
+    <p>Street: <%= address.street %></p>
+    <p>City: <%= address.city %></p>
+    <p>State: <%= address.state %></p>
+    <p>Zip code: <%= address.zip %></p>
+    <% if params[:order].nil? %>
+      <%= link_to 'Ship to This Address', profile_orders_path(address_id: address), method: :post %>
+    <% else %>
+      <%= link_to 'Ship to This Address', profile_order_path(params[:order], :address_id => address), method: :patch %>
+    <% end %>
+  </div>
+<% end %>

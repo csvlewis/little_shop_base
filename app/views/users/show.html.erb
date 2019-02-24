@@ -3,10 +3,21 @@
 <p>Name: <%= @user.name %></p>
 <p>Role: <%= @user.role %></p>
 <p>Email: <%= @user.email %></p>
-<p>Address: <%= @user.address %></p>
-<p>City: <%= @user.city %></p>
-<p>State: <%= @user.state %></p>
-<p>Zip: <%= @user.zip %></p>
+
+<h5>Addresses:</h5>
+<% @user.addresses.each do |address| %>
+  <div class="address-<%= address.id %>">
+    <h6><%= address.nickname %></h6>
+    <p>Street: <%= address.street %></p>
+    <p>State: <%= address.state %></p>
+    <p>City: <%= address.city %></p>
+    <p>Zip code: <%= address.zip %></p>
+    <%= link_to 'Edit Address', edit_address_path(address) %>
+    <%= link_to 'Delete Address', address_path(address), method: :delete if address.deletable? %>
+  </div>
+<% end %>
+
+<%= link_to 'Add an Address', new_address_path  %>
 
 <% if @user == current_user %>
 <%= link_to "Edit", edit_profile_path %>

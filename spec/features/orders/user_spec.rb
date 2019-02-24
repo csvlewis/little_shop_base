@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'User Order workflow', type: :feature do
   before :each do
     @user = create(:user)
+    Address.create(user: @user, nickname: 'nickname', street: 'street', state: 'CO', city: 'Fairfield', zip: 1)
     @admin = create(:admin)
 
     @merchant_1 = create(:merchant)
@@ -13,11 +14,11 @@ RSpec.describe 'User Order workflow', type: :feature do
     @item_1 = create(:item, user: @merchant_1)
     @item_2 = create(:item, user: @merchant_2, inventory: @inventory_level)
 
-    @order_1 = create(:order, user: @user, created_at: 1.day.ago)
+    @order_1 = create(:order, user: @user, address: @user.addresses.first, created_at: 1.day.ago)
     @oi_1 = create(:order_item, order: @order_1, item: @item_1, price: 1, quantity: 1, created_at: 1.day.ago)
     @oi_2 = create(:fulfilled_order_item, order: @order_1, item: @item_2, price: 2, quantity: @purchased_amount, created_at: 1.day.ago, updated_at: 2.hours.ago)
 
-    @order_2 = create(:completed_order, user: @user, created_at: 1.day.ago)
+    @order_2 = create(:completed_order, user: @user, address: @user.addresses.first, created_at: 1.day.ago)
     @oi_1 = create(:fulfilled_order_item, order: @order_2, item: @item_1, price: 1, quantity: 1, created_at: 1.day.ago, updated_at: 5.hours.ago)
     @oi_2 = create(:fulfilled_order_item, order: @order_2, item: @item_2, price: 2, quantity: 1, created_at: 1.day.ago, updated_at: 2.hours.ago)
 

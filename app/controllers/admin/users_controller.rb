@@ -32,7 +32,7 @@ class Admin::UsersController < Admin::BaseController
     user.save
     redirect_to admin_users_path
   end
-  
+
   def disable
     user = User.find(params[:id])
     set_active_flag(user, false)

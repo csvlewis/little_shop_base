@@ -17,16 +17,20 @@ RSpec.describe OrderItem, type: :model do
 
   describe 'instance methods' do
     it '.subtotal' do
-      oi = create(:order_item, quantity: 5, price: 3)
+      address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+      order = create(:order, address: address)
+      oi = create(:order_item, order: order, quantity: 5, price: 3)
 
       expect(oi.subtotal).to eq(15)
     end
 
     it 'inventory_available' do
+      address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+      order = create(:order, address: address)
       item = create(:item, inventory:2)
-      oi1 = create(:order_item, quantity: 1, item: item)
-      oi2 = create(:order_item, quantity: 2, item: item)
-      oi3 = create(:order_item, quantity: 3, item: item)
+      oi1 = create(:order_item, order: order, quantity: 1, item: item)
+      oi2 = create(:order_item, order: order, quantity: 2, item: item)
+      oi3 = create(:order_item, order: order, quantity: 3, item: item)
 
       expect(oi1.inventory_available).to eq(true)
       expect(oi2.inventory_available).to eq(true)
@@ -34,10 +38,12 @@ RSpec.describe OrderItem, type: :model do
     end
 
     it '.fulfill' do
+      address = Address.create(nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+      order = create(:order, address: address)
       item = create(:item, inventory:2)
-      oi1 = create(:order_item, quantity: 1, item: item)
-      oi2 = create(:order_item, quantity: 1, item: item)
-      oi3 = create(:order_item, quantity: 1, item: item)
+      oi1 = create(:order_item, order: order, quantity: 1, item: item)
+      oi2 = create(:order_item, order: order, quantity: 1, item: item)
+      oi3 = create(:order_item, order: order, quantity: 1, item: item)
 
       oi1.fulfill
 
