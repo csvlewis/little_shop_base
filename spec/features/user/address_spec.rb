@@ -38,6 +38,8 @@ RSpec.describe 'user addresses', type: :feature do
       @address = Address.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
       @user.addresses << @address
       login_as(@user)
+      @merchant = create(:merchant)
+      @item = create(:item, user: @merchant)
     end
     it 'I can add a new address from a link on my Profile page' do
       expect(page).to_not have_content('123 Main Street')
@@ -106,10 +108,8 @@ RSpec.describe 'user addresses', type: :feature do
     end
 
     it 'I can choose one of my adresses for shipping when checking out my cart' do
-      merchant = create(:merchant)
-      item = create(:item, user: merchant)
 
-      visit item_path(item)
+      visit item_path(@item)
       click_button "Add to Cart"
       visit cart_path
       click_button 'Check out'
@@ -125,13 +125,11 @@ RSpec.describe 'user addresses', type: :feature do
     end
 
     it 'if I have no addresses, I cannot check out and instead receive a notice with a link to add an address' do
-      merchant = create(:merchant)
-      item = create(:item, user: merchant)
 
       click_link 'Delete Address'
       expect(@user.addresses.count).to eq(0)
 
-      visit item_path(item)
+      visit item_path(@item)
       click_button "Add to Cart"
       visit cart_path
 
@@ -149,6 +147,39 @@ RSpec.describe 'user addresses', type: :feature do
       click_button 'Create Address'
 
       expect(@user.addresses.count).to eq(1)
+    end
+
+    it 'I can change the address of a pending order' do
+      order = create(:order, user: @user, address: @address)
+      address = Address.create(user: @user, nickname: 'Work', street: 'street 2', city: 'city 2', state: 'state 2', zip: 2)
+
+      expect(@user.orders.first.address).to eq(@address)
+
+      click_link 'Orders'
+      click_link "#{order.id}"
+      click_button 'Change Shipping Address'
+
+      expect(current_path).to eq(addresses_path)
+
+      within(".address-#{address.id}") do
+        click_link 'Ship to This Address'
+      end
+
+      expect(current_path).to eq(profile_order_path(order))
+      expect(@user.orders.first.address).to eq(address)
+      expect(page).to have_content('You have changed an order\'s shipping address.')
+    end
+
+    it 'I can see the shipping address of an order on its show page' do
+        order = create(:order, user: @user, address: @address)
+
+        click_link 'Orders'
+        click_link "#{order.id}"
+
+        expect(page).to have_content("Street: #{@address.street}")
+        expect(page).to have_content("State: #{@address.state}")
+        expect(page).to have_content("City: #{@address.city}")
+        expect(page).to have_content("Zip code: #{@address.zip}")
     end
   end
 end

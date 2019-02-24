@@ -7,7 +7,7 @@ class Profile::OrdersController < ApplicationController
   end
 
   def create
-    address = Address.find(params[:id])
+    address = Address.find(params[:address_id])
     order = Order.create(user: current_user, address: address, status: :pending)
     @cart.items.each do |item|
       order.order_items.create!(
@@ -20,6 +20,14 @@ class Profile::OrdersController < ApplicationController
 
     flash[:success] = 'You have successfully checked out!'
     redirect_to profile_orders_path
+  end
+
+  def update
+    order = Order.find(params[:id])
+    address = Address.find(params[:address_id])
+    order.update(address: address)
+    flash[:success] = 'You have changed an order\'s shipping address.'
+    redirect_to profile_order_path(order)
   end
 
   def show
