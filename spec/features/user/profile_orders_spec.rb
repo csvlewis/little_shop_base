@@ -5,6 +5,8 @@ include ActionView::Helpers::NumberHelper
 RSpec.describe 'Profile Orders page', type: :feature do
   before :each do
     @user = create(:user)
+    Address.create(user: @user, nickname: 'nickname', street: 'street', state: 'CO', city: 'Fairfield', zip: 1)
+
     @admin = create(:admin)
 
     @merchant_1 = create(:merchant)
@@ -27,7 +29,7 @@ RSpec.describe 'Profile Orders page', type: :feature do
     describe 'should show information about each order when I do have orders' do
       before :each do
         yesterday = 1.day.ago
-        @order = create(:order, user: @user, created_at: yesterday)
+        @order = create(:order, user: @user, address: @user.addresses.first, created_at: yesterday)
         @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 1, created_at: yesterday, updated_at: yesterday)
         @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 1, created_at: yesterday, updated_at: 2.hours.ago)
       end
@@ -59,7 +61,7 @@ RSpec.describe 'Profile Orders page', type: :feature do
     describe 'should show a single order show page' do
       before :each do
         yesterday = 1.day.ago
-        @order = create(:order, user: @user, created_at: yesterday)
+        @order = create(:order, user: @user, address: @user.addresses.first, created_at: yesterday)
         @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 3, created_at: yesterday, updated_at: yesterday)
         @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 5, created_at: yesterday, updated_at: 2.hours.ago)
       end

@@ -4,6 +4,8 @@ RSpec.describe 'admin user show workflow', type: :feature do
   before :each do
     @admin = create(:admin)
     @user = create(:user)
+    Address.create(user: @user, nickname: 'nickname', street: 'street', state: 'CO', city: 'Fairfield', zip: 1)
+
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin)
   end
 
@@ -13,10 +15,10 @@ RSpec.describe 'admin user show workflow', type: :feature do
     expect(page).to have_content("Name: #{@user.name}")
     expect(page).to have_content("Role: #{@user.role}")
     expect(page).to have_content("Email: #{@user.email}")
-    expect(page).to have_content("Address: #{@user.address}")
-    expect(page).to have_content("City: #{@user.city}")
-    expect(page).to have_content("State: #{@user.state}")
-    expect(page).to have_content("Zip: #{@user.zip}")
+    expect(page).to have_content("Street: #{@user.addresses.first.street}")
+    expect(page).to have_content("City: #{@user.addresses.first.city}")
+    expect(page).to have_content("State: #{@user.addresses.first.state}")
+    expect(page).to have_content("Zip code: #{@user.addresses.first.zip}")
 
     expect(page).to_not have_link('See all Orders')
   end
@@ -39,10 +41,6 @@ RSpec.describe 'admin user show workflow', type: :feature do
 
       fill_in :user_name, with: @updated_name
       fill_in :user_email, with: @updated_email
-      fill_in :user_address, with: @updated_address
-      fill_in :user_city, with: @updated_city
-      fill_in :user_state, with: @updated_state
-      fill_in :user_zip, with: @updated_zip
       fill_in :user_password, with: @updated_password
       fill_in :user_password_confirmation, with: @updated_password
 
@@ -54,10 +52,6 @@ RSpec.describe 'admin user show workflow', type: :feature do
       expect(page).to have_content("Profile has been updated")
       expect(page).to have_content("Name: #{@updated_name}")
       expect(page).to have_content("Email: #{@updated_email}")
-      expect(page).to have_content("Address: #{@updated_address}")
-      expect(page).to have_content("City: #{@updated_city}")
-      expect(page).to have_content("State: #{@updated_state}")
-      expect(page).to have_content("Zip: #{@updated_zip}")
       expect(updated_user.password_digest).to_not eq(old_digest)
     end
   end

@@ -16,6 +16,7 @@ class UsersController < ApplicationController
     if @user.save
       session[:user_id] = @user.id
       flash[:success] = "Welcome #{@user.name}, you are now registered and logged in."
+      flash[:notice] = "Enter a home address."
       redirect_to new_address_path
     else
       invalid_user(@user)

@@ -5,10 +5,10 @@ RSpec.describe "merchant index workflow", type: :feature do
     describe "displays all active merchant information" do
       before :each do
         @merchant_1, @merchant_2 = create_list(:merchant, 2)
-        @merchant_1.addresses.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
-        @merchant_2.addresses.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
+        @merchant_1.addresses.create(nickname: 'Home', street: 'street', city: 'city 1', state: 'state 1', zip: 1)
+        @merchant_2.addresses.create(nickname: 'Home', street: 'street', city: 'city 2', state: 'state 2', zip: 1)
         @inactive_merchant = create(:inactive_merchant)
-        @inactive_merchant.addresses.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
+        @inactive_merchant.addresses.create(nickname: 'Home', street: 'street', city: 'city 3', state: 'state 2', zip: 1)
       end
       scenario 'as a visitor' do
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
@@ -45,6 +45,7 @@ RSpec.describe "merchant index workflow", type: :feature do
             expect(page).to have_button('Enable Merchant')
           end
         else
+
           expect(page).to_not have_content(@inactive_merchant.name)
           expect(page).to_not have_content("#{@inactive_merchant.addresses.first.city}, #{@inactive_merchant.addresses.first.state}")
         end
