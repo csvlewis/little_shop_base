@@ -11,10 +11,12 @@
     <h5 class="card-title"><%= @merchant.name %></h5>
     <p>Role: <%= @merchant.role %></p>
     <p>Email: <%= @merchant.email %></p>
-    <p>Address: <%= @merchant.address %></p>
-    <p>City: <%= @merchant.city %></p>
-    <p>State: <%= @merchant.state %></p>
-    <p>Zip: <%= @merchant.zip %></p>
+    <% unless @merchant.addresses.empty? %>
+      <p>Address: <%= @merchant.addresses.first.street %></p>
+      <p>City: <%= @merchant.addresses.first.city %></p>
+      <p>State: <%= @merchant.addresses.first.state %></p>
+      <p>Zip: <%= @merchant.addresses.first.zip %></p>
+    <% end %>
   </div>
 </div>
 

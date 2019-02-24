@@ -52,6 +52,7 @@
   <% end %>
 <% end %>
 
+<%  %>
 <% @merchants.each do |merchant| %>
   <%= tag.section id: "merchant-#{merchant.id}" do %>
     <%= render partial: "merchant_card", locals: {merchant: merchant}%>

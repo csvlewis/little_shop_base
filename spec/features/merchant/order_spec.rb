@@ -8,7 +8,8 @@ RSpec.describe 'merchant order show workflow' do
       @merchant1 = create(:merchant)
       @merchant2 = create(:merchant)
       @user = create(:user)
-      @order = create(:order, user: @user)
+      Address.create(user: @user, nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
+      @order = create(:order, user: @user, address: @user.addresses.first)
       @item1 = create(:item, user: @merchant1, inventory: 2)
       @item2 = create(:item, user: @merchant2, inventory: 2)
       @item3 = create(:item, user: @merchant1, inventory: 2)
@@ -32,7 +33,7 @@ RSpec.describe 'merchant order show workflow' do
         visit dashboard_order_path(@order)
 
         expect(page).to have_content("Customer Name: #{@user.name}")
-        expect(page).to have_content("Customer Address: #{@user.address} #{@user.city}, #{@user.state} #{@user.zip}")
+        expect(page).to have_content("Customer Address: #{@order.address.street} #{@order.address.city}, #{@order.address.state} #{@order.address.zip}")
       end
 
       it 'shows item information for that merchant' do
@@ -90,6 +91,7 @@ RSpec.describe 'merchant order show workflow' do
       describe 'sets order as complete if I am the last merchant to fulfill items' do
         before :each do
           user = create(:user)
+          Address.create(user: user, nickname: 'Home', street: 'street', city: 'Fairfield', state: 'CO', zip: 1)
           @admin = create(:admin)
 
           @merchant_1 = create(:merchant)
@@ -98,11 +100,11 @@ RSpec.describe 'merchant order show workflow' do
 
           item_2 = create(:item)
 
-          @order_1 = create(:order, user: user)
+          @order_1 = create(:order, user: user, address: user.addresses.first)
           @oi_1 = create(:order_item, order: @order_1, item: item_1, price: 1, quantity: 10)
           create(:fulfilled_order_item, order: @order_1, item: item_2, price: 1, quantity: 1)
 
-          @order_2 = create(:order, user: user)
+          @order_2 = create(:order, user: user, address: user.addresses.first)
           @oi_3 = create(:order_item, order: @order_2, item: item_3, price: 1, quantity: 1)
         end
         scenario 'as a merchant' do
