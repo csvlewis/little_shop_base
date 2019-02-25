@@ -8,8 +8,11 @@
 <% @item.all_reviews.each do |review| %>
     <%= tag.div class: "review-#{review.id}" do %>
       <%= review.title %>
+      <%= review.username %>
       <%= review.description %>
       <%= review.rating %>/5
-      Updated at: <%=  review.updated_at unless review.created_at == review.updated_at %>
+      <% unless review.created_at == review.updated_at %>
+        Updated at: <%=  review.updated_at %>
+      <% end %>
     <% end %>
 <% end %>

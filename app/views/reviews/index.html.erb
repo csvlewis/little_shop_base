@@ -1,5 +1,6 @@
 <% @reviews.each do |review| %>
   <%= tag.div id: "review-#{review.id}" do %>
+  <%= link_to "#{review.item_name}", item_path(review.order_item.item) %>
   <%= review.title %>
   <%= review.description %>
   Rating: <%= review.rating %>/5
