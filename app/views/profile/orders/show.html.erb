@@ -12,7 +12,7 @@
   <p>Zip code: <%= @order.address.zip %></p>
 
   <% if @order.status == 'pending' %>
-  <p><%= button_to 'Change Shipping Address', addresses_path(order: @order), method: :get%></p>
+  <p><%= button_to 'Change Shipping Address', addresses_path, params: { order: @order }, method: :get%></p>
   <p><%= button_to 'Cancel Order', profile_order_path(@order), method: :delete %></p>
   <% end %>
 

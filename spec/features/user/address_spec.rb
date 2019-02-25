@@ -177,18 +177,22 @@ RSpec.describe 'user addresses', type: :feature do
       expect(current_path).to eq(profile_order_path(order))
       expect(@user.orders.first.address).to eq(address)
       expect(page).to have_content('You have changed an order\'s shipping address.')
+      expect(page).to have_content("Street: #{address.street}")
+      expect(page).to have_content("State: #{address.state}")
+      expect(page).to have_content("City: #{address.city}")
+      expect(page).to have_content("Zip code: #{address.zip}")
     end
 
     it 'I can see the shipping address of an order on its show page' do
-        order = create(:order, user: @user, address: @address)
+      order = create(:order, user: @user, address: @address)
 
-        click_link 'Orders'
-        click_link "#{order.id}"
+      click_link 'Orders'
+      click_link "#{order.id}"
 
-        expect(page).to have_content("Street: #{@address.street}")
-        expect(page).to have_content("State: #{@address.state}")
-        expect(page).to have_content("City: #{@address.city}")
-        expect(page).to have_content("Zip code: #{@address.zip}")
+      expect(page).to have_content("Street: #{@address.street}")
+      expect(page).to have_content("State: #{@address.state}")
+      expect(page).to have_content("City: #{@address.city}")
+      expect(page).to have_content("Zip code: #{@address.zip}")
     end
   end
 end
