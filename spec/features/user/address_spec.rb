@@ -32,6 +32,23 @@ RSpec.describe 'user addresses', type: :feature do
     end
   end
 
+  context 'as an admin' do
+    it 'I do not see links to edit, delete, or create an address on a user\'s profile' do
+      admin = create(:admin)
+      user = create(:user)
+      address = Address.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
+      user.addresses << address
+
+      login_as(admin)
+
+      visit admin_user_path(user)
+
+      expect(page).to_not have_link('Edit Address')
+      expect(page).to_not have_link('Add an Address')
+      expect(page).to_not have_link('Delete Address')
+    end
+  end
+
   context 'as a registered user' do
     before :each do
       @user = create(:user)
@@ -176,7 +193,7 @@ RSpec.describe 'user addresses', type: :feature do
 
       expect(current_path).to eq(profile_order_path(order))
       expect(@user.orders.first.address).to eq(address)
-      expect(page).to have_content('You have changed an order\'s shipping address.')
+      expect(page).to have_content('You have changed this order\'s shipping address.')
       expect(page).to have_content("Street: #{address.street}")
       expect(page).to have_content("State: #{address.state}")
       expect(page).to have_content("City: #{address.city}")
