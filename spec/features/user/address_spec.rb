@@ -123,13 +123,22 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to_not have_content("Street: #{@address.street}")
     end
 
-    it 'I cannot delete an address that has been used in a completed order' do
-      expect(page).to have_content("Street: #{@address.street}")
+    it 'I cannot delete an address that has been used in a pending or completed order' do
+      address_2 = Address.create(nickname: 'Work', street: 'street', city: 'city', state: 'state', zip: 1)
+      @user.addresses << address_2
+      
+      visit profile_path
+
+      expect(page).to have_content("#{@address.nickname}")
+      expect(page).to have_content("#{address_2.nickname}")
       expect(page).to have_link('Delete Address')
 
       create(:completed_order, user: @user, address: @user.addresses.first)
+      create(:order, user: @user, address: @user.addresses.last)
       visit profile_path
-      expect(page).to have_content("Street: #{@address.street}")
+
+      expect(page).to have_content("#{@address.nickname}")
+      expect(page).to have_content("#{address_2.nickname}")
       expect(page).to_not have_link('Delete Address')
     end
 

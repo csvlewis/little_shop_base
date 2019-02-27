@@ -5,8 +5,6 @@ class Address < ApplicationRecord
   has_many :orders
 
   def deletable?
-    orders.none? do |order|
-      order.status == 'completed'
-    end
+    orders.empty?
   end
 end

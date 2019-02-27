@@ -5,7 +5,7 @@
   <p>Status: <%= @order.status %></p>
   <p>Item Count: <%= @order.total_item_count %></p>
   <p>Total Cost: <%= number_to_currency(@order.total_cost) %></p>
-  <h5>Shipping Address:</h5>
+  <h6>Shipping Address:</h6>
   <p>Street: <%= @order.address.street %></p>
   <p>State: <%= @order.address.state %></p>
   <p>City: <%= @order.address.city %></p>

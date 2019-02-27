@@ -34,6 +34,25 @@ RSpec.describe 'User Reviews', type: :feature do
 
     login_as(@user)
   end
+
+  context 'as an admin' do
+    before :each do
+      admin = create(:admin)
+      click_link 'Log out'
+      login_as(admin)
+    end
+
+    it 'I do not see a link to a user\'s review index' do
+      visit admin_user_path(@user)
+      expect(page).to_not have_link('See All Reviews')
+    end
+
+    it 'I do not see a link to leave a review from an order show page' do
+      visit admin_user_order_path(@user, @completed_order_1)
+      expect(page).to_not have_link('Review Item')
+    end
+  end
+
   context 'as a registered user' do
     it 'I can write a review for an item I have bought in a completed order' do
       click_link 'Orders'
@@ -217,19 +236,22 @@ RSpec.describe 'User Reviews', type: :feature do
       expect(page).to have_content(@review_1.title)
       expect(page).to have_content(@review_1.description)
       expect(page).to have_content(@review_1.rating)
-      expect(page).to_not have_content(@review_1.updated_at)
+      expect(page).to have_content(@review_1.created_at)
+      expect(page).to_not have_content("Updated at: #{@review_1.updated_at}")
 
       expect(page).to have_content(@review_2.username)
       expect(page).to have_content(@review_2.title)
       expect(page).to have_content(@review_2.description)
       expect(page).to have_content(@review_2.rating)
-      expect(page).to_not have_content(@review_2.updated_at)
+      expect(page).to have_content(@review_2.created_at)
+      expect(page).to_not have_content("Updated at: #{@review_2.updated_at}")
 
       expect(page).to have_content(@review_3.username)
       expect(page).to have_content(@review_3.title)
       expect(page).to have_content(@review_3.description)
       expect(page).to have_content(@review_3.rating)
-      expect(page).to have_content(@review_3.updated_at)
+      expect(page).to have_content(@review_3.created_at)
+      expect(page).to have_content("Updated at: #{@review_3.updated_at}")
     end
 
     it 'item names on a user order index are links to that item\'s show page' do
