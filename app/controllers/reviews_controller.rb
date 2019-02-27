@@ -42,7 +42,7 @@ class ReviewsController < ApplicationController
     else
       flash[:danger] = 'There are problems with the provided information.'
       @form_path = [@order_item, @review]
-      render :new
+      render :edit
     end
   end
 
