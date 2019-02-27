@@ -1,9 +1,10 @@
 <% @reviews.each do |review| %>
   <%= tag.div id: "review-#{review.id}" do %>
-  <%= review.title %>
-  <%= review.description %>
-  Rating: <%= review.rating %>/5
-  <%= link_to 'Edit Review', edit_review_path(review) %>
-  <%= link_to 'Delete Review', review_path(review), method: :delete %>
+    <p>Review for: <%= link_to "#{review.item_name}", item_path(review.order_item.item) %></p>
+    <p>Review Title: <%= review.title %></p>
+    <p><%= review.description %></p>
+    <p>Rating: <%= review.rating %>/5</p>
+    <%= link_to 'Edit Review', edit_review_path(review) %>
+    <%= link_to 'Delete Review', review_path(review), method: :delete %>
   <% end %>
 <% end %>

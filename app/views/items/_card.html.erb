@@ -27,7 +27,15 @@
       <% end %><br/>
 
       <strong>Average time to fulfill:</strong>
-        <%= item.avg_time_to_fulfill %>!
+        <%= item.avg_time_to_fulfill %>
+    </p>
+
+    <p>
+      <% if item.average_rating %>
+        Average Rating: <%= item.average_rating.round(1) %>/5.0
+      <% else %>
+        Not Yet Rated
+      <% end %>
     </p>
 
     <% if current_reguser? || current_user.nil? %>

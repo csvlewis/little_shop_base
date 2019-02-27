@@ -26,7 +26,7 @@ class Profile::OrdersController < ApplicationController
     order = Order.find(params[:id])
     address = Address.find(params[:address_id])
     order.update(address: address)
-    flash[:success] = 'You have changed an order\'s shipping address.'
+    flash[:success] = 'You have changed this order\'s shipping address.'
     redirect_to profile_order_path(order)
   end
 

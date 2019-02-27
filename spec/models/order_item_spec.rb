@@ -68,9 +68,10 @@ RSpec.describe OrderItem, type: :model do
 
     describe '.reviewable?' do
       it 'returns true if an orderitem is fulfilled and is part of a completed order' do
-        pending = create(:order)
-        cancelled = create(:cancelled_order)
-        completed = create(:completed_order)
+        address = Address.create(nickname: 'Home', street: 'street', city: 'city', state: 'state', zip: 1)
+        pending = create(:order, address: address)
+        cancelled = create(:cancelled_order, address: address)
+        completed = create(:completed_order, address: address)
         oi_1 = create(:order_item, order: pending)
         oi_2 = create(:fulfilled_order_item, order: pending)
         oi_3 = create(:order_item, order: cancelled)

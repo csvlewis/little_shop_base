@@ -100,11 +100,12 @@ RSpec.describe Item, type: :model do
   describe '.average_rating' do
     it 'returns the average rating of all reviews for an item' do
       user = create(:user)
+      address = Address.create(user: user, nickname: 'home', street: 'street', state: 'state', city: 'city', zip: 1)
       merchant = create(:merchant)
       item = create(:item, user: merchant)
-      order_1 = create(:completed_order, user: user)
+      order_1 = create(:completed_order, user: user, address: address)
       oi_1 = create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
-      order_2 = create(:completed_order, user: user)
+      order_2 = create(:completed_order, user: user, address: address)
       oi_2 = create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
       user.reviews.create(order_item: oi_1, title: 'title', description: 'description', rating: 1, username: 'username', item_name: 'item name')
       user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')
@@ -116,11 +117,12 @@ RSpec.describe Item, type: :model do
   describe '.all_reviews' do
     it 'returns all reviews for a given item' do
       user = create(:user)
+      address = Address.create(user: user, nickname: 'home', street: 'street', state: 'state', city: 'city', zip: 1)
       merchant = create(:merchant)
       item = create(:item, user: merchant)
-      order_1 = create(:completed_order, user: user)
+      order_1 = create(:completed_order, user: user, address: address)
       oi_1 = create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
-      order_2 = create(:completed_order, user: user)
+      order_2 = create(:completed_order, user: user, address: address)
       oi_2 = create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
       review_1 = user.reviews.create(order_item: oi_1, title: 'title', description: 'description', rating: 1, username: 'username', item_name: 'item name')
       review_2 = user.reviews.create(order_item: oi_2, title: 'title', description: 'description', rating: 2, username: 'username', item_name: 'item name')

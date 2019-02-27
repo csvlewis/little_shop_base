@@ -1,15 +1,14 @@
 <%= render partial: "card", locals: {item: @item, img_width: 300}%>
-<% if @item.average_rating %>
-  Average Rating: <%= @item.average_rating.round(1) %>/5.0
-<% else %>
-  Not Yet Rated
-<% end %>
 
 <% @item.all_reviews.each do |review| %>
     <%= tag.div class: "review-#{review.id}" do %>
-      <%= review.title %>
-      <%= review.description %>
-      <%= review.rating %>/5
-      Updated at: <%=  review.updated_at unless review.created_at == review.updated_at %>
+      <p>Review Title: <%= review.title %></p>
+      <p>User: <%= review.username %></p>
+      <p><%= review.description %></p>
+      <p>Rating: <%= review.rating %>/5</p>
+      <p>Created at: <%= review.created_at %></p>
+      <% unless review.created_at == review.updated_at %>
+        <p>Updated at: <%= review.updated_at %></p>
+      <% end %>
     <% end %>
 <% end %>

@@ -4,35 +4,55 @@ RSpec.describe 'User Reviews', type: :feature do
   before :each do
     @user = create(:user)
     @user_2 = create(:user)
+    address = Address.create(user: @user, nickname: 'home', street: 'street', state: 'state', city: 'city', zip: 1)
     @merchant_1 = create(:merchant)
 
     @item_1 = create(:item, user: @merchant_1)
     @item_2 = create(:item, user: @merchant_1)
 
-    @pending_order = create(:order, user: @user,)
+    @pending_order = create(:order, user: @user, address: address)
     @oi_1 = create(:order_item, order: @pending_order, item: @item_1)
 
-    @cancelled_order = create(:cancelled_order, user: @user)
+    @cancelled_order = create(:cancelled_order, user: @user, address: address)
     @oi_2 = create(:order_item, order: @cancelled_order, item: @item_1)
 
-    @completed_order_1 = create(:completed_order, user: @user)
+    @completed_order_1 = create(:completed_order, user: @user, address: address)
     @oi_3 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_1)
     @oi_4 = create(:fulfilled_order_item, order: @completed_order_1, item: @item_2)
 
-    @completed_order_2 = create(:completed_order, user: @user)
+    @completed_order_2 = create(:completed_order, user: @user, address: address)
     @oi_5 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_1)
     @oi_6 = create(:fulfilled_order_item, order: @completed_order_2, item: @item_2)
 
-    @completed_order_3 = create(:completed_order, user: @user_2)
+    @completed_order_3 = create(:completed_order, user: @user_2, address: address)
     @oi_7 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_1)
     @oi_8 = create(:fulfilled_order_item, order: @completed_order_3, item: @item_2)
 
-    @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: 'username', item_name: 'item name')
-    @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: 'username', item_name: 'item name')
-    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 4, username: 'username', item_name: 'item name', created_at: 1.hour.ago, updated_at: 1.second.ago)
+    @review_1 = Review.create(user: @user, order_item: @oi_4, title: 'title 1', description: 'description 1', rating: 1, username: @user.name, item_name: @oi_4.item.name)
+    @review_2 = Review.create(user: @user, order_item: @oi_6, title: 'title 2', description: 'description 2', rating: 2, username: @user.name, item_name: @oi_6.item.name)
+    @review_3 = Review.create(user: @user_2, order_item: @oi_8, title: 'title 3', description: 'description 3', rating: 4, username: @user_2.name, item_name: @oi_8.item.name, created_at: 1.hour.ago, updated_at: 1.second.ago)
 
     login_as(@user)
   end
+
+  context 'as an admin' do
+    before :each do
+      admin = create(:admin)
+      click_link 'Log out'
+      login_as(admin)
+    end
+
+    it 'I do not see a link to a user\'s review index' do
+      visit admin_user_path(@user)
+      expect(page).to_not have_link('See All Reviews')
+    end
+
+    it 'I do not see a link to leave a review from an order show page' do
+      visit admin_user_order_path(@user, @completed_order_1)
+      expect(page).to_not have_link('Review Item')
+    end
+  end
+
   context 'as a registered user' do
     it 'I can write a review for an item I have bought in a completed order' do
       click_link 'Orders'
@@ -122,12 +142,14 @@ RSpec.describe 'User Reviews', type: :feature do
       expect(current_path).to eq(reviews_path)
 
       within("div#review-#{@review_1.id}") do
+        expect(page).to have_link(@review_1.item_name)
         expect(page).to have_content(@review_1.title)
         expect(page).to have_content(@review_1.description)
         expect(page).to have_content("Rating: #{@review_1.rating}/5")
       end
 
       within("div#review-#{@review_2.id}") do
+        expect(page).to have_content(@review_2.item_name)
         expect(page).to have_content(@review_2.title)
         expect(page).to have_content(@review_2.description)
         expect(page).to have_content("Rating: #{@review_2.rating}/5")
@@ -210,20 +232,36 @@ RSpec.describe 'User Reviews', type: :feature do
         click_link "#{@item_2.name}"
       end
 
+      expect(page).to have_content(@review_2.username)
       expect(page).to have_content(@review_1.title)
       expect(page).to have_content(@review_1.description)
       expect(page).to have_content(@review_1.rating)
-      expect(page).to_not have_content(@review_1.updated_at)
+      expect(page).to have_content(@review_1.created_at)
+      expect(page).to_not have_content("Updated at: #{@review_1.updated_at}")
 
+      expect(page).to have_content(@review_2.username)
       expect(page).to have_content(@review_2.title)
       expect(page).to have_content(@review_2.description)
       expect(page).to have_content(@review_2.rating)
-      expect(page).to_not have_content(@review_2.updated_at)
+      expect(page).to have_content(@review_2.created_at)
+      expect(page).to_not have_content("Updated at: #{@review_2.updated_at}")
 
+      expect(page).to have_content(@review_3.username)
       expect(page).to have_content(@review_3.title)
       expect(page).to have_content(@review_3.description)
       expect(page).to have_content(@review_3.rating)
-      expect(page).to have_content(@review_3.updated_at)
+      expect(page).to have_content(@review_3.created_at)
+      expect(page).to have_content("Updated at: #{@review_3.updated_at}")
+    end
+
+    it 'item names on a user order index are links to that item\'s show page' do
+      visit reviews_path
+
+      within("div#review-#{@review_1.id}") do
+        click_link "#{@review_1.item_name}"
+      end
+
+      expect(current_path).to eq(item_path(@item_2))
     end
   end
 
