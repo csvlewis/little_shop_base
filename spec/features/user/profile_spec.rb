@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'user profile', type: :feature do
   before :each do
     @user = create(:user)
+    Address.create(user: @user, nickname: 'nickname', street: 'street', state: 'CO', city: 'Fairfield', zip: 1)
   end
 
   describe 'registered user visits their profile' do
@@ -14,10 +15,10 @@ RSpec.describe 'user profile', type: :feature do
       expect(page).to have_content("Name: #{@user.name}")
       expect(page).to have_content("Role: #{@user.role}")
       expect(page).to have_content("Email: #{@user.email}")
-      expect(page).to have_content("Address: #{@user.address}")
-      expect(page).to have_content("City: #{@user.city}")
-      expect(page).to have_content("State: #{@user.state}")
-      expect(page).to have_content("Zip: #{@user.zip}")
+      expect(page).to have_content("Street: #{@user.addresses.first.street}")
+      expect(page).to have_content("City: #{@user.addresses.first.city}")
+      expect(page).to have_content("State: #{@user.addresses.first.state}")
+      expect(page).to have_content("Zip code: #{@user.addresses.first.zip}")
       expect(page).to have_link('Edit')
     end
     describe 'user profile may or may not show a link to see orders' do
@@ -26,7 +27,7 @@ RSpec.describe 'user profile', type: :feature do
         expect(page).to_not have_link('See all Orders')
       end
       it 'shows the link if user has orders' do
-        create(:order, user: @user)
+        create(:order, user: @user, address: @user.addresses.first)
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
 
         visit profile_path
@@ -43,15 +44,11 @@ RSpec.describe 'user profile', type: :feature do
 
         visit profile_path
 
-        click_link 'Edit'
+        click_link 'Edit User'
 
         expect(current_path).to eq('/profile/edit')
         expect(find_field('Name').value).to eq(@user.name)
         expect(find_field('Email').value).to eq(@user.email)
-        expect(find_field('Address').value).to eq(@user.address)
-        expect(find_field('City').value).to eq(@user.city)
-        expect(find_field('State').value).to eq(@user.state)
-        expect(find_field('Zip').value).to eq(@user.zip)
         expect(find_field('Password').value).to eq(nil)
         expect(find_field('Password confirmation').value).to eq(nil)
       end
@@ -76,10 +73,6 @@ RSpec.describe 'user profile', type: :feature do
 
           fill_in :user_name, with: @updated_name
           fill_in :user_email, with: @updated_email
-          fill_in :user_address, with: @updated_address
-          fill_in :user_city, with: @updated_city
-          fill_in :user_state, with: @updated_state
-          fill_in :user_zip, with: @updated_zip
           fill_in :user_password, with: @updated_password
           fill_in :user_password_confirmation, with: @updated_password
 
@@ -91,10 +84,6 @@ RSpec.describe 'user profile', type: :feature do
           expect(page).to have_content("Your profile has been updated")
           expect(page).to have_content("Name: #{@updated_name}")
           expect(page).to have_content("Email: #{@updated_email}")
-          expect(page).to have_content("Address: #{@updated_address}")
-          expect(page).to have_content("City: #{@updated_city}")
-          expect(page).to have_content("State: #{@updated_state}")
-          expect(page).to have_content("Zip: #{@updated_zip}")
           expect(updated_user.password_digest).to_not eq(old_digest)
         end
       end

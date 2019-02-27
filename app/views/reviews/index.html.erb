@@ -1,0 +1,14 @@
+<% @reviews.each do |review| %>
+<%= tag.div class: "card float-left m-3 order-card" do %>
+  <%= tag.div class: "card-body" do %>
+      <%= tag.div id: "review-#{review.id}" do %>
+        <p>Review for: <%= link_to "#{review.item_name}", item_path(review.order_item.item) %></p>
+        <p>Review Title: <%= review.title %></p>
+        <p><%= review.description %></p>
+        <p>Rating: <%= review.rating %>/5</p>
+        <%= link_to 'Edit Review', edit_review_path(review) %>
+        <%= link_to 'Delete Review', review_path(review), method: :delete %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

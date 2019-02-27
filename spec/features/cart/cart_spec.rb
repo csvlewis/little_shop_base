@@ -175,7 +175,8 @@ RSpec.describe 'cart workflow', type: :feature do
     end
     scenario 'as a registered user' do
       user = create(:user)
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+      Address.create(user: user, nickname: 'home', street: 'street', state: 'state', city: 'city', zip: 1)
+      login_as(user)
 
       visit profile_orders_path
       expect(page).to have_content('You have no orders yet')
@@ -183,9 +184,10 @@ RSpec.describe 'cart workflow', type: :feature do
       visit item_path(@item)
       click_button "Add to Cart"
       visit cart_path
-
       click_button 'Check out'
 
+      expect(current_path).to eq(addresses_path)
+      click_link 'Ship to This Address'
       expect(current_path).to eq(profile_orders_path)
       expect(page).to have_content('You have successfully checked out!')
 

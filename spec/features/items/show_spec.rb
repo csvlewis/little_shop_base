@@ -4,11 +4,12 @@ include ActionView::Helpers::NumberHelper
 RSpec.describe 'items show workflow', type: :feature do
   it 'shows basic information about each item' do
     user = create(:user)
+    Address.create(user: user, nickname: 'nickname', street: 'street', state: 'CO', city: 'Fairfield', zip: 1)
     merchant = create(:merchant)
     item = create(:item, user: merchant)
-    order_1 = create(:completed_order, user: user)
+    order_1 = create(:completed_order, user: user, address: user.addresses.first)
     create(:fulfilled_order_item, order: order_1, item: item, quantity: 5, price: 2, created_at: 3.days.ago, updated_at: 1.day.ago)
-    order_2 = create(:completed_order, user: user)
+    order_2 = create(:completed_order, user: user, address: user.addresses.first)
     create(:fulfilled_order_item, order: order_2, item: item, quantity: 5, price: 2, created_at: 1.days.ago, updated_at: 1.hour.ago)
 
     visit item_path(item)

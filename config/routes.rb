@@ -11,10 +11,18 @@ Rails.application.routes.draw do
     get '/edit', to: 'users#edit', as: :edit_profile
   end
   namespace :profile do
-    resources :orders, only: [:index, :create, :show, :destroy]
+    resources :orders, only: [:index, :create, :show, :destroy, :update]
   end
 
+  resources :addresses, only: [:index, :new, :create, :edit, :update, :destroy]
+
   resources :users, only: [:create, :update]
+
+  resources :reviews, only: [:index, :edit, :destroy]
+
+  resources :order_item do
+    resources :reviews, only: [:new, :create, :update]
+  end
 
   get '/cart', to: 'cart#show'
   post '/cart/item/:id', to: 'cart#add', as: :cart_item
