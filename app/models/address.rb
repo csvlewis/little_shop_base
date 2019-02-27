@@ -7,4 +7,10 @@ class Address < ApplicationRecord
   def deletable?
     orders.empty?
   end
+
+  def editable?
+    orders.none? do |order|
+      order.completed?
+    end
+  end
 end

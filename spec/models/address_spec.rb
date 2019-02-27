@@ -22,14 +22,35 @@ RSpec.describe Address, type: :model do
         a2 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
         a3 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
         a4 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
+
+        expect(a1.deletable?).to eq(true)
+        expect(a2.deletable?).to eq(true)
+        expect(a3.deletable?).to eq(true)
+        expect(a4.deletable?).to eq(true)
+
         create(:order, address: a2)
         create(:cancelled_order, address: a3)
         create(:completed_order, address: a4)
+
 
         expect(a1.deletable?).to eq(true)
         expect(a2.deletable?).to eq(false)
         expect(a3.deletable?).to eq(false)
         expect(a4.deletable?).to eq(false)
+      end
+    end
+
+    describe '.editable?' do
+      it 'returns false if the address has been used in a completed order' do
+        user = create(:user)
+        a1 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
+
+        expect(a1.editable?).to eq(true)
+
+        order = create(:completed_order, address: a1)
+        a1.orders << order
+
+        expect(a1.editable?).to eq(false)
       end
     end
   end

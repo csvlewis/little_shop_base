@@ -103,6 +103,15 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to have_content("Street: New Street")
     end
 
+    it 'I cannot edit an address that has been used in a completed order' do
+      expect(page).to have_link('Edit Address')
+
+      create(:completed_order, user: @user, address: @user.addresses.first)
+      visit profile_path
+
+      expect(page).to_not have_link('Edit Address')
+    end
+
     it 'I am given an error message if I try to edit an address with invalid information.' do
       click_link 'Edit Address'
       fill_in :address_street, with: ''
@@ -123,22 +132,26 @@ RSpec.describe 'user addresses', type: :feature do
       expect(page).to_not have_content("Street: #{@address.street}")
     end
 
-    it 'I cannot delete an address that has been used in a pending or completed order' do
+    it 'I cannot delete an address that has been used in an order' do
       address_2 = Address.create(nickname: 'Work', street: 'street', city: 'city', state: 'state', zip: 1)
-      @user.addresses << address_2
-      
+      address_3 = Address.create(nickname: 'Work 2', street: 'street', city: 'city', state: 'state', zip: 1)
+      @user.addresses << [address_2, address_3]
+
       visit profile_path
 
       expect(page).to have_content("#{@address.nickname}")
       expect(page).to have_content("#{address_2.nickname}")
+      expect(page).to have_content("#{address_3.nickname}")
       expect(page).to have_link('Delete Address')
 
       create(:completed_order, user: @user, address: @user.addresses.first)
-      create(:order, user: @user, address: @user.addresses.last)
+      create(:order, user: @user, address: @user.addresses.second)
+      create(:cancelled_order, user: @user, address: @user.addresses.third)
       visit profile_path
 
       expect(page).to have_content("#{@address.nickname}")
       expect(page).to have_content("#{address_2.nickname}")
+      expect(page).to have_content("#{address_3.nickname}")
       expect(page).to_not have_link('Delete Address')
     end
 
@@ -215,6 +228,7 @@ RSpec.describe 'user addresses', type: :feature do
       click_link 'Orders'
       click_link "#{order.id}"
 
+      expect(page).to have_content("Nickname: #{@address.nickname}")
       expect(page).to have_content("Street: #{@address.street}")
       expect(page).to have_content("State: #{@address.state}")
       expect(page).to have_content("City: #{@address.city}")
