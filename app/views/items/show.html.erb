@@ -1,14 +1,19 @@
 <%= render partial: "card", locals: {item: @item, img_width: 300}%>
 
+<h4>Item Reviews:</h4>
 <% @item.all_reviews.each do |review| %>
-    <%= tag.div class: "review-#{review.id}" do %>
-      <p>Review Title: <%= review.title %></p>
-      <p>User: <%= review.username %></p>
-      <p><%= review.description %></p>
-      <p>Rating: <%= review.rating %>/5</p>
-      <p>Created at: <%= review.created_at %></p>
-      <% unless review.created_at == review.updated_at %>
-        <p>Updated at: <%= review.updated_at %></p>
+  <%= tag.div class: "card float-left m-3 order-card" do %>
+    <%= tag.div class: "card-body" do %>
+      <%= tag.div class: "review-#{review.id}" do %>
+        <p>Review Title: <%= review.title %></p>
+        <p>User: <%= review.username %></p>
+        <p><%= review.description %></p>
+        <p>Rating: <%= review.rating %>/5</p>
+        <p>Created at: <%= review.created_at %></p>
+        <% unless review.created_at == review.updated_at %>
+          <p>Updated at: <%= review.updated_at %></p>
+        <% end %>
       <% end %>
     <% end %>
+  <% end %>
 <% end %>

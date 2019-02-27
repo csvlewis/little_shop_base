@@ -5,6 +5,7 @@
   <p>Status: <%= @order.status %></p>
   <p>Item Count: <%= @order.total_item_count %></p>
   <p>Total Cost: <%= number_to_currency(@order.total_cost) %></p>
+
   <h6>Shipping Address:</h6>
   <p>Nickname: <%= @order.address.nickname %></p>
   <p>Street: <%= @order.address.street %></p>

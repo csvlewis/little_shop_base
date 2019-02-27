@@ -6,33 +6,39 @@
 
 <h6>Addresses:</h6>
 <% @user.addresses.each do |address| %>
-  <div class="address-<%= address.id %>">
-    <h7><%= address.nickname %></h7>
-    <p>Street: <%= address.street %></p>
-    <p>State: <%= address.state %></p>
-    <p>City: <%= address.city %></p>
-    <p>Zip code: <%= address.zip %></p>
-    <%= link_to 'Edit Address', edit_address_path(address) if current_user.default? && address.editable? %>
-    <%= link_to 'Delete Address', address_path(address), method: :delete if address.deletable? && current_user.default? %>
-  </div>
+<%= tag.div class: "card float-left m-3 order-card" do %>
+  <%= tag.div class: "card-body" do %>
+      <div class="address-<%= address.id %>">
+        <h7><%= address.nickname %></h7>
+        <p>Street: <%= address.street %></p>
+        <p>State: <%= address.state %></p>
+        <p>City: <%= address.city %></p>
+        <p>Zip code: <%= address.zip %></p>
+        <%= link_to 'Edit Address', edit_address_path(address) if current_user.default? && address.editable? %>
+        <%= link_to 'Delete Address', address_path(address), method: :delete if address.deletable? && current_user.default? %>
+      </div>
+    <% end %>
+  <% end %>
 <% end %>
 
+<%= tag.div class: "card float-left m-3 order-card" do %>
+  <%= tag.div class: "card-body" do %>
+    <%= link_to 'Add an Address', new_address_path if current_user.default? %>
+    <% if @user == current_user %>
+    <%= link_to 'Edit User', edit_profile_path %>
+    <% elsif current_admin? %>
+    <%= link_to 'Edit User', edit_admin_user_path(@user) %>
+    <% end %>
+    <% unless @user.reviews.empty? %>
+      <%= link_to 'See All Reviews', reviews_path if current_user.default? %>
+    <% end %>
 
-<%= link_to 'Add an Address', new_address_path if current_user.default? %>
-<% if @user == current_user %>
-<%= link_to 'Edit User', edit_profile_path %>
-<% elsif current_admin? %>
-<%= link_to 'Edit User', edit_admin_user_path(@user) %>
-<% end %>
-
-<% unless @user.reviews.empty? %>
-  <%= link_to 'See All Reviews', reviews_path if current_user.default? %>
-<% end %>
-
-<% unless @user.orders.empty? %>
-  <% if @user.id == current_user.id %>
-  <%= link_to 'See all Orders', profile_orders_path %>
-  <% elsif current_admin? %>
-  <%= link_to 'See all Orders', admin_user_orders_path(@user) %>
+    <% unless @user.orders.empty? %>
+      <% if @user.id == current_user.id %>
+      <%= link_to 'See all Orders', profile_orders_path %>
+      <% elsif current_admin? %>
+      <%= link_to 'See all Orders', admin_user_orders_path(@user) %>
+      <% end %>
+    <% end %>
   <% end %>
 <% end %>

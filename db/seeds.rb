@@ -9,7 +9,7 @@ User.destroy_all
 
 admin = create(:admin)
 user = create(:user)
-address = Address.create(user: user, nickname: 'home', street: '123 Main Street', state: 'Denver', city: 'CO', zip: 12345)
+address = Address.create(user: user, nickname: 'Home', street: '123 Main Street', state: 'CO', city: 'Denver', zip: 12345)
 merchant_1 = create(:merchant)
 
 merchant_2, merchant_3, merchant_4 = create_list(:merchant, 3)
