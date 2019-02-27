@@ -16,7 +16,7 @@ RSpec.describe Address, type: :model do
 
   describe 'instance methods' do
     describe '.deletable?' do
-      it 'returns false if the address has been used in a completed order' do
+      it 'returns false if the address is in a pending, completed, or cancelled order' do
         user = create(:user)
         a1 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
         a2 = Address.create(user: user, nickname: 'nickname', street: 'street', state: 'state', city: 'city', zip: 1)
@@ -27,8 +27,8 @@ RSpec.describe Address, type: :model do
         create(:completed_order, address: a4)
 
         expect(a1.deletable?).to eq(true)
-        expect(a2.deletable?).to eq(true)
-        expect(a3.deletable?).to eq(true)
+        expect(a2.deletable?).to eq(false)
+        expect(a3.deletable?).to eq(false)
         expect(a4.deletable?).to eq(false)
       end
     end
